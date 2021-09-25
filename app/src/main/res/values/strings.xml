@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Lab3-RestAPI</string>
+
+    <!-- Tabs header -->
+    <string name="tab_live">Live</string>
+    <string name="tab_today">Today</string>
 </resources>
