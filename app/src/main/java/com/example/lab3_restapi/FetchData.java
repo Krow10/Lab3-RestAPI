@@ -64,7 +64,7 @@ public class FetchData {
 
                 return ll.get(0);
             } catch (IOException e) { // TODO : Show notification for user
-                System.err.println("Unable to find this location : " + e.getMessage());
+                System.err.println("Unable to find this location (" + city + ") : " + e.getMessage());
             }
         }
 
