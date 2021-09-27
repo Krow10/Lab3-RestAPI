@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Lab3-RestAPI</string>
+    <string name="city_search_hint">Search for city</string>
 
     <!-- Tabs header -->
     <string name="tab_live">Live</string>
     <string name="tab_today">Today</string>
+    <string name="tab_tomorrow">Tomorrow</string>
 </resources>

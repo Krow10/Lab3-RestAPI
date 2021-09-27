@@ -9,8 +9,9 @@
         app:showAsAction="ifRoom"
         app:actionLayout="@layout/action_refresh_data"/>
     <item
-        android:id="@+id/change_location"
+        android:id="@+id/action_change_location"
         android:icon="@drawable/ic_baseline_edit_location_24"
         android:title="Change location"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="collapseActionView|ifRoom"
+        app:actionLayout="@layout/action_change_location"/>
 </menu>

@@ -49,7 +49,7 @@ public class CollectionWeatherFragment extends Fragment {
                 String tab_title;
                 switch (position) {
                     case 0:
-                        tab_title = "Live";
+                        tab_title = getString(R.string.tab_live);
                         BadgeDrawable rec_icon = tab.getOrCreateBadge();
                         rec_icon.setHorizontalOffset(dpToPixels(-3.5f));
                         rec_icon.setVerticalOffset(dpToPixels(.5f));
@@ -63,10 +63,10 @@ public class CollectionWeatherFragment extends Fragment {
                         colorAnim.start();
                         break;
                     case 1:
-                        tab_title = "Today";
+                        tab_title = getString(R.string.tab_today);
                         break;
                     case 2:
-                        tab_title = "Tomorrow";
+                        tab_title = getString(R.string.tab_tomorrow);
                         break;
                     default:
 
