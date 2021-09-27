@@ -37,10 +37,6 @@ public class WeatherCollectionAdapter extends FragmentStateAdapter {
         return weather_fragments.size();
     }
 
-    public void addFragment(Fragment fragment) { // TODO : Use this method to add week forecast tabs
-        weather_fragments.add(fragment);
-    }
-
     public void refreshFragmentsData(Context ctx, APIData data) {
         for (int i = 0; i < getItemCount(); ++i) {
             Fragment f = weather_fragments.get(i);

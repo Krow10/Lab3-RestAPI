@@ -71,7 +71,7 @@ public class APIData {
     private WeatherData parseWeatherData(JSONObject obj, final String city, long timezone_offset) { // TODO : Parse differently for live, hourly and daily
         try {
             JSONObject current_weather = obj.getJSONArray("weather").getJSONObject(0);
-            Function<Long, Long> changeTimezone = (Function<Long, Long>) l -> Long.valueOf(l + timezone_offset); // TODO : Change this to not take into account searched city's timezone
+            Function<Long, Long> changeTimezone = (Function<Long, Long>) l -> Long.valueOf(l + timezone_offset);
 
             WeatherData w = new WeatherData();
             w.city = city;

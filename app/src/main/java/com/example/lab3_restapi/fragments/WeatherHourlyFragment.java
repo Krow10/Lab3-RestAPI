@@ -102,10 +102,8 @@ public class WeatherHourlyFragment extends WeatherFragment {
         public void updateForecast(List<APIData.WeatherData> f) {
             if (f != null && f.size() > 0) {
                 forecast = f;
-                Log.d(getTag(), "Updating forecast : " + forecast); // TODO : Update all items
+                Log.d(getTag(), "Updating forecast : " + forecast);
                 notifyDataSetChanged();
-//                for (int k = 0; k < getItemCount(); ++k)
-//                    notifyItemInserted(k);
             }
         }
     }

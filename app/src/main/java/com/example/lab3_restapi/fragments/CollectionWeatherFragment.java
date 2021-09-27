@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,11 @@ import com.example.lab3_restapi.R;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.util.Calendar;
 
 public class CollectionWeatherFragment extends Fragment {
     WeatherCollectionAdapter weatherCollectionAdapter;
@@ -65,12 +71,10 @@ public class CollectionWeatherFragment extends Fragment {
                     case 1:
                         tab_title = getString(R.string.tab_today);
                         break;
-                    case 2:
-                        tab_title = getString(R.string.tab_tomorrow);
-                        break;
                     default:
-
-                        tab_title = "Day " + (position - 1); // TODO : Change to a date format
+                        Calendar pos_to_date = Calendar.getInstance();
+                        pos_to_date.add(Calendar.DAY_OF_YEAR, position - 1);
+                        tab_title = DateFormat.getDateInstance(DateFormat.MEDIUM).format(pos_to_date.getTime());
                 }
 
                 tab.setText(tab_title);
@@ -83,13 +87,18 @@ public class CollectionWeatherFragment extends Fragment {
             @Override
             public void run() {
                 final String city =  new CityPreferences(activity).getCity();
-                api_data = new APIData(FetchData.fetchAPIData(activity.getApplicationContext(), city), city);
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        weatherCollectionAdapter.refreshFragmentsData(activity.getApplicationContext(), api_data); // TODO : Change to allow passing forecast data
-                    }
-                });
+                final JSONObject data = FetchData.fetchAPIData(activity.getApplicationContext(), city);
+                if (data != null) {
+                    api_data = new APIData(data, city);
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            weatherCollectionAdapter.refreshFragmentsData(activity.getApplicationContext(), api_data);
+                        }
+                    });
+                } else {
+                    Log.e(getTag(), "Unable to fetch API data.");
+                }
             }
         }.start();
     }
