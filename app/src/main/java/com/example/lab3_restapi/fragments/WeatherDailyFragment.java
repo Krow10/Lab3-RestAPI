@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -19,25 +18,17 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class WeatherLiveFragment extends WeatherFragment {
+public class WeatherDailyFragment extends WeatherFragment {
     private APIData.WeatherData current;
-    private TextView cityField;
     private ImageView weatherIcon;
-    private TextView updatedField;
-    private TextView currentTemperatureField;
-    private TextView detailsField;
 
-    public WeatherLiveFragment() {}
+    public WeatherDailyFragment() {}
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.weather_live, container, false);
-        updatedField = (TextView) rootView.findViewById(R.id.w_live_updated);
-        cityField = (TextView) rootView.findViewById(R.id.w_live_city);
-        currentTemperatureField = (TextView) rootView.findViewById(R.id.w_live_current_temperature);
-        weatherIcon = (ImageView) rootView.findViewById(R.id.w_live_icon);
-        detailsField = (TextView) rootView.findViewById(R.id.w_live_details);
+        View rootView = inflater.inflate(R.layout.weather_daily, container, false);
+        weatherIcon = (ImageView) rootView.findViewById(R.id.w_daily_icon);
 
         if (current != null)
             updateFields();
@@ -49,7 +40,7 @@ public class WeatherLiveFragment extends WeatherFragment {
     public void updateWeatherData(Context ctx, List<APIData.WeatherData> current_) {
         if (getView() != null) {
             current = current_.get(0);
-            Log.d(this.getTag(), "Updated live weather data !");
+            Log.d(this.getTag(), "Updated hourly weather data !");
             updateFields();
         } else { // TODO : Add placeholder animations
             new Handler().postDelayed(new Runnable() {
@@ -73,10 +64,6 @@ public class WeatherLiveFragment extends WeatherFragment {
                 + "\nSunrise : " + timestampToDate(current.sunrise)
                 + "\nSunset : " + timestampToDate(current.sunset);
 
-        cityField.setText(current.city); // TODO : Get postal code, country, ... if possible (modify 'getCityLocation' ?)
         Picasso.get().load(weather_icon_url).placeholder(new CircularProgressIndicator(getContext()).getIndeterminateDrawable()).into(weatherIcon);
-        updatedField.setText(update_time);
-        currentTemperatureField.setText(temp);
-        detailsField.setText(details);
     }
 }

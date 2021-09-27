@@ -19,9 +19,10 @@ public class WeatherCollectionAdapter extends FragmentStateAdapter {
 
         weather_fragments = new ArrayList<>();
         weather_fragments.add(new WeatherLiveFragment());
+        weather_fragments.add(new WeatherHourlyFragment());
 
         for (int forecast_days = 7; forecast_days > 0; forecast_days--)
-            weather_fragments.add(new WeatherForecastFragment());
+            weather_fragments.add(new WeatherDailyFragment());
     }
 
     @NonNull
@@ -45,10 +46,10 @@ public class WeatherCollectionAdapter extends FragmentStateAdapter {
             Fragment f = weather_fragments.get(i);
             if (f instanceof WeatherLiveFragment)
                 ((WeatherLiveFragment)(f)).updateWeatherData(ctx, Arrays.asList(data.getCurrentWeatherData()));
-            else if (f instanceof WeatherForecastFragment && i == 1)
-                ((WeatherForecastFragment)(f)).updateWeatherData(ctx, data.getHourlyWeatherData());
+            else if (f instanceof WeatherHourlyFragment && i == 1)
+                ((WeatherHourlyFragment)(f)).updateWeatherData(ctx, data.getHourlyWeatherData());
             else
-                ((WeatherForecastFragment)(f)).updateWeatherData(ctx, data.getDailyWeatherData());
+                ((WeatherDailyFragment)(f)).updateWeatherData(ctx, Arrays.asList(data.getDailyWeatherData(i - 1)));
         }
     }
 }

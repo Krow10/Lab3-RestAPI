@@ -4,34 +4,34 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/city_field"
+        android:id="@+id/w_live_city"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="City"/>
 
     <TextView
-        android:id="@+id/updated_field"
+        android:id="@+id/w_live_updated"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/city_field"
+        android:layout_below="@id/w_live_city"
         android:text="Updated"/>
 
     <ImageView
-        android:id="@+id/weather_icon"
+        android:id="@+id/w_live_icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_launcher_foreground"
         android:layout_centerInParent="true"/>
 
     <TextView
-        android:id="@+id/details_field"
+        android:id="@+id/w_live_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/weather_icon"
+        android:layout_below="@id/w_live_icon"
         android:text="Details"/>
 
     <TextView
-        android:id="@+id/current_temperature_field"
+        android:id="@+id/w_live_current_temperature"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

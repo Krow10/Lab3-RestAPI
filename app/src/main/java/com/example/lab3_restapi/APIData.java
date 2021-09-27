@@ -6,7 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -16,7 +15,7 @@ public class APIData {
     private List<WeatherData> hourly;
     private List<WeatherData> daily;
 
-    public final class WeatherData implements Serializable {
+    public final class WeatherData {
         public String city;
         public long timestamp;
         public long sunrise;
@@ -40,7 +39,7 @@ public class APIData {
     }
 
     public void refreshData(JSONObject root, final String city) {
-        try { // TODO : Add constant strings to xml file + parse json in other function (prevent c/c for forecast parsing, etc...)
+        try {
             long timezone_offset = root.getLong("timezone_offset");
             current = parseWeatherData(root.getJSONObject("current"), city, timezone_offset);
             JSONArray hourly_weather = root.getJSONArray("hourly");
@@ -51,7 +50,7 @@ public class APIData {
             for (int i = 0; i < daily_weather.length(); i++)
                 daily.add(parseWeatherData(daily_weather.getJSONObject(i), city, timezone_offset));
 
-            Log.d(getClass().getName(), "Hourly : " + hourly + "\nDaily : " + daily);
+            Log.d(getClass().getName(), "Refresh : " + root.toString(4));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -62,23 +61,23 @@ public class APIData {
     }
 
     public List<WeatherData> getHourlyWeatherData() {
-        return hourly;
+        return hourly.subList(0, 12);
     }
 
-    public List<WeatherData> getDailyWeatherData() {
-        return daily;
+    public WeatherData getDailyWeatherData(int day) {
+        return daily.get(day);
     }
 
-    private WeatherData parseWeatherData(JSONObject obj, final String city, long timezone_offset) {
+    private WeatherData parseWeatherData(JSONObject obj, final String city, long timezone_offset) { // TODO : Parse differently for live, hourly and daily
         try {
             JSONObject current_weather = obj.getJSONArray("weather").getJSONObject(0);
-            Function<Long, Long> convertTimestamp = (Function<Long, Long>) l -> Long.valueOf(l + timezone_offset*1000);
+            Function<Long, Long> changeTimezone = (Function<Long, Long>) l -> Long.valueOf(l + timezone_offset);
 
             WeatherData w = new WeatherData();
             w.city = city;
-            w.timestamp = convertTimestamp.apply(obj.getLong("dt"));
-            w.sunrise = convertTimestamp.apply(obj.has("sunrise") ? obj.getLong("sunrise") : 0);
-            w.sunset = convertTimestamp.apply(obj.has("sunset") ? obj.getLong("sunset") : 0);
+            w.timestamp = changeTimezone.apply(obj.getLong("dt"));
+            w.sunrise = changeTimezone.apply(obj.has("sunrise") ? obj.getLong("sunrise") : 0);
+            w.sunset = changeTimezone.apply(obj.has("sunset") ? obj.getLong("sunset") : 0);
             w.temp = obj.get("temp") instanceof JSONObject ? ((JSONObject) obj.get("temp")).getDouble("day") : obj.getDouble("temp");
             w.feels_like = obj.get("feels_like") instanceof JSONObject ? ((JSONObject) obj.get("feels_like")).getDouble("day") : obj.getDouble("feels_like");
             w.pressure = obj.getDouble("pressure");

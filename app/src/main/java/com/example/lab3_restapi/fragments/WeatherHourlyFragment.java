@@ -23,14 +23,16 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WeatherForecastFragment extends WeatherFragment {
-    private RecyclerView forecast_view;
-    private WeatherForecastAdapter forecast_adapter;
+public class WeatherHourlyFragment extends WeatherFragment {
+    private RecyclerView hourly_view;
+    private WeatherForecastAdapter hourly_adapter;
+    private List<APIData.WeatherData> current;
 
     private class WeatherForecastAdapter extends RecyclerView.Adapter<WeatherForecastAdapter.ViewHolder> {
         private List<APIData.WeatherData> forecast;
 
         public class ViewHolder extends RecyclerView.ViewHolder {
+            private final TextView forecast_time;
             private final ImageView forecast_icon;
             private final TextView forecast_temp;
             private final TextView forecast_details;
@@ -38,9 +40,14 @@ public class WeatherForecastFragment extends WeatherFragment {
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
 
-                forecast_icon = itemView.findViewById(R.id.forecast_icon);
-                forecast_temp = itemView.findViewById(R.id.forecast_temp);
-                forecast_details = itemView.findViewById(R.id.forecast_details);
+                forecast_time = itemView.findViewById(R.id.w_hourly_time);
+                forecast_icon = itemView.findViewById(R.id.w_hourly_icon);
+                forecast_temp = itemView.findViewById(R.id.w_hourly_temp);
+                forecast_details = itemView.findViewById(R.id.w_hourly_details);
+            }
+
+            public TextView getForecastTime() {
+                return forecast_time;
             }
 
             public ImageView getForecastIcon() {
@@ -64,21 +71,24 @@ public class WeatherForecastFragment extends WeatherFragment {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.weather_forecast_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.weather_hourly_item, parent, false);
 
             return new ViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            APIData.WeatherData day = forecast.get(position);
+            // TODO : Add constant strings to xml file
+            APIData.WeatherData hour = forecast.get(position);
 
-            final String temp = day.temp + " °C (feels like " + day.feels_like + " °C)";
-            final String weather_icon_url = "http://openweathermap.org/img/wn/" + day.icon_url + "@2x.png";
-            final String details = day.description
-                    + "\nHumidity : " + day.humidity
-                    + "\nPressure : " + day.pressure;
+            final String time = WeatherFragment.timestampToDate(hour.timestamp);
+            final String temp = hour.temp + " °C (feels like " + hour.feels_like + " °C)";
+            final String weather_icon_url = "http://openweathermap.org/img/wn/" + hour.icon_url + "@2x.png";
+            final String details = hour.description
+                    + " / Humidity : " + hour.humidity
+                    + " / Pressure : " + hour.pressure;
 
+            holder.getForecastTime().setText(time);
             Picasso.get().load(weather_icon_url).placeholder(new CircularProgressIndicator(getContext()).getIndeterminateDrawable()).into(holder.getForecastIcon());
             holder.getForecastTemp().setText(temp);
             holder.getForecastDetails().setText(details);
@@ -94,20 +104,25 @@ public class WeatherForecastFragment extends WeatherFragment {
                 forecast = f;
                 Log.d(getTag(), "Updating forecast : " + forecast); // TODO : Update all items
                 notifyDataSetChanged();
+//                for (int k = 0; k < getItemCount(); ++k)
+//                    notifyItemInserted(k);
             }
         }
     }
 
-    public WeatherForecastFragment() {}
+    public WeatherHourlyFragment() {}
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.weather_forecast, container, false);
-        forecast_adapter = new WeatherForecastAdapter(new ArrayList<>());
-        forecast_view = rootView.findViewById(R.id.forecast_recyclerview);
-        forecast_view.setLayoutManager(new LinearLayoutManager(getContext()));
-        forecast_view.setAdapter(forecast_adapter);
+        View rootView = inflater.inflate(R.layout.weather_hourly, container, false);
+        hourly_adapter = new WeatherForecastAdapter(new ArrayList<>());
+        hourly_view = rootView.findViewById(R.id.w_hourly_recyclerview);
+        hourly_view.setLayoutManager(new LinearLayoutManager(getContext()));
+        hourly_view.setAdapter(hourly_adapter);
+
+        if (current != null)
+            updateWeatherData(getContext(), current);
 
         return rootView;
     }
@@ -115,7 +130,8 @@ public class WeatherForecastFragment extends WeatherFragment {
     @Override
     public void updateWeatherData(Context ctx, List<APIData.WeatherData> new_forecast) {
         if (getView() != null) {
-            forecast_adapter.updateForecast(new_forecast);
+            current = new_forecast;
+            hourly_adapter.updateForecast(new_forecast);
         } else {
             new Handler().postDelayed(new Runnable() {
                 @Override
