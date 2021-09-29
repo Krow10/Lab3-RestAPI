@@ -37,19 +37,24 @@ import java.util.Objects;
 public class WeatherLiveFragment extends WeatherFragment {
     private APIData.WeatherData current;
     private float old_wind_deg;
+
     private TextView city;
     private TextView local_time;
+
     private ImageView weather_icon;
     private TextView weather_desc;
+
     private LinearLayout details_layout;
     private TextView current_temperature;
     private TextView feels_temperature;
     private TextView wind_dir;
     private TextView wind_speed;
     private TextView humidity;
+
     private LinearLayout sun_layout;
     private TextView sunrise;
     private TextView sunset;
+
     private TextView updated;
 
     public WeatherLiveFragment() {}
@@ -57,23 +62,27 @@ public class WeatherLiveFragment extends WeatherFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        old_wind_deg = 0;
         View rootView = inflater.inflate(R.layout.weather_live, container, false);
         rootView.setAlpha(0f);
-        old_wind_deg = 0;
 
-        details_layout = rootView.findViewById(R.id.w_live_details_layout);
-        sun_layout = rootView.findViewById(R.id.w_live_sun_layout);
         city = (TextView) rootView.findViewById(R.id.w_live_city);
         local_time = (TextView) rootView.findViewById(R.id.w_live_local_time);
+
         weather_icon = (ImageView) rootView.findViewById(R.id.w_live_weather_icon);
         weather_desc = (TextView) rootView.findViewById(R.id.w_live_weather_desc);
+
+        details_layout = rootView.findViewById(R.id.w_live_details_layout);
         current_temperature = (TextView) rootView.findViewById(R.id.w_live_current_temperature);
         feels_temperature = (TextView) rootView.findViewById(R.id.w_live_feels_temperature);
         wind_dir = (TextView) rootView.findViewById(R.id.w_live_wind_dir);
         wind_speed = (TextView) rootView.findViewById(R.id.w_live_wind_speed);
         humidity = (TextView) rootView.findViewById(R.id.w_live_humidity);
+
+        sun_layout = rootView.findViewById(R.id.w_live_sun_layout);
         sunrise = (TextView) rootView.findViewById(R.id.w_live_sunrise);
         sunset = (TextView) rootView.findViewById(R.id.w_live_sunset);
+
         updated = (TextView) rootView.findViewById(R.id.w_live_updated);
 
         if (current != null)
@@ -86,7 +95,7 @@ public class WeatherLiveFragment extends WeatherFragment {
     @Override
     public void updateWeatherData(Context ctx, ArrayList<APIData.WeatherData> current_) { // TODO : Call this every minute for live data refresh
         if (getView() != null) {
-            current = current_.get(0);
+            current = current_.get(0); // Only one weather forecast for live data
             Log.d(this.getTag(), "Updated live weather data !");
             updateFields();
         } else { // TODO : Add placeholder animations
@@ -96,55 +105,51 @@ public class WeatherLiveFragment extends WeatherFragment {
 
     @SuppressLint("SetTextI18n")
     private void updateFields() {
-        // TODO : Check for empty weather data
+        city.setText(current.city);
+        local_time.setText("Local time : " + timestampToDate(current.timestamp));
 
         final int icon_id = getIconID(getContext(), current.icon_url);
+        weather_icon.setImageResource(icon_id != 0 ? icon_id : R.drawable.ic_baseline_cached_24);
+        weather_desc.setText(current.description);
+
+        details_layout.setVisibility(View.VISIBLE);
         final String temp = new DecimalFormat("0.#").format(current.temp); // TODO : Make °C / °F user preferences
+        current_temperature.setText(temp);
+
         final String feels_temp = getResources().getString(R.string.feels_like) + formatDecimal(current.feels_like);
         SpannableString formatted_feels_temp = new SpannableString(feels_temp);
-            formatted_feels_temp.setSpan(new StyleSpan(Typeface.BOLD), 0, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        final String wind_direction = getDirectionFromAngle(current.wind_deg);
+        formatted_feels_temp.setSpan(new StyleSpan(Typeface.BOLD), 0, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        feels_temperature.setText(formatted_feels_temp);
 
         RotateDrawable wind_dir_icon = (RotateDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_wind_dir_animated, null);
         Objects.requireNonNull(wind_dir_icon).setColorFilter(ResourcesCompat.getColor(getResources(), R.color.ic_details_fill, null), PorterDuff.Mode.SRC_IN);
         wind_dir_icon.setFromDegrees(old_wind_deg);
         wind_dir_icon.setToDegrees((float) current.wind_deg);
         old_wind_deg = (float) current.wind_deg;
-        ObjectAnimator anim = ObjectAnimator.ofInt(wind_dir_icon, "level", 0, 10000);
-        anim.setDuration(getResources().getInteger(R.integer.wind_dir_direction_anim_speed));
-        anim.setInterpolator(new AnticipateOvershootInterpolator());
-        anim.start();
-
-        final String device_local_time = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date().getTime());
-        final String update_time = getResources().getString(R.string.last_updated) + device_local_time;
-
-        city.setText(current.city);
-        local_time.setText("Local time : " + timestampToDate(current.timestamp));
-        weather_icon.setImageResource(icon_id != 0 ? icon_id : R.drawable.ic_baseline_cached_24);
-        weather_desc.setText(current.description);
-        current_temperature.setText(temp);
-        feels_temperature.setText(formatted_feels_temp);
-
+        // Use ObjectAnimator to run the rotation animation by animating the 'level' property
+        ObjectAnimator wind_dir_anim = ObjectAnimator.ofInt(wind_dir_icon, "level", 0, 10000);
+        wind_dir_anim.setDuration(getResources().getInteger(R.integer.wind_dir_direction_anim_speed));
+        wind_dir_anim.setInterpolator(new AnticipateOvershootInterpolator());
+        wind_dir_anim.start();
+        // Get cardinal direction from angle
+        final String wind_direction = getDirectionFromAngle(current.wind_deg);
         wind_dir.setText(wind_direction);
         wind_dir.setCompoundDrawablesRelativeWithIntrinsicBounds(wind_dir_icon, null, null, null);
         wind_dir.setCompoundDrawablePadding(15);
 
         wind_speed.setText(formatDecimal(current.wind_speed * 3.6f) + " km/h");
         loadIconText(wind_speed, R.drawable.ic_wind_speed, R.color.ic_details_fill);
-
-        details_layout.setVisibility(View.VISIBLE);
-
         humidity.setText(formatDecimal(current.humidity) + " %");
         loadIconText(humidity, R.drawable.ic_humidity, R.color.ic_details_fill);
 
+        sun_layout.setVisibility(View.VISIBLE);
         sunrise.setText(timestampToDate(current.sunrise));
         loadIconText(sunrise, R.drawable.ic_sunrise, R.color.ic_sun_fill);
-
         sunset.setText(timestampToDate(current.sunset));
         loadIconText(sunset, R.drawable.ic_sunset, R.color.ic_sun_fill);
 
-        sun_layout.setVisibility(View.VISIBLE);
-
+        final String device_local_time = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date().getTime());
+        final String update_time = getResources().getString(R.string.last_updated) + device_local_time;
         updated.setText(update_time);
     }
 
@@ -161,6 +166,7 @@ public class WeatherLiveFragment extends WeatherFragment {
     private int getIconID(Context context, String iconRef) {
         if (iconRef.contains("03") || iconRef.contains("04"))
             iconRef = iconRef.substring(0, 2) + "dn";
+
         return context.getResources().getIdentifier("ic_" + iconRef, "drawable", context.getPackageName());
     }
 

@@ -93,6 +93,7 @@ public class APIData {
         try {
             long timezone_offset = root.getLong("timezone_offset");
             current = parseWeatherData(root.getJSONObject("current"), city, timezone_offset);
+
             JSONArray hourly_weather = root.getJSONArray("hourly");
             for (int i = 0; i < hourly_weather.length(); i++)
                 hourly.add(parseWeatherData(hourly_weather.getJSONObject(i), city, timezone_offset));

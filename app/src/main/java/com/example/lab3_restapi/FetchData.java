@@ -26,6 +26,7 @@ public class FetchData {
             Log.e("fetchAPIData", "Could not get city '" + city + "' coordinates.");
             return null;
         }
+
         // Setup OpenWeather API request for live and forecast data
         RequestQueue queue = Volley.newRequestQueue(context);
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
@@ -42,7 +43,7 @@ public class FetchData {
         queue.add(jsonObjectRequest);
 
         try {
-            return future.get(); // Blocking call
+            return future.get(); // Blocking call since this method is launched from a alternate thread
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return null;

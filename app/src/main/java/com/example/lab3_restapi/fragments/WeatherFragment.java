@@ -17,6 +17,6 @@ public abstract class WeatherFragment extends Fragment {
     public static String timestampToDate(long timestamp) {
         DateFormat d_format = DateFormat.getTimeInstance(DateFormat.SHORT);
         d_format.setTimeZone(TimeZone.getTimeZone("GMT")); // Set timezone to GMT because timestamp already accounts for the city's hour offset
-        return d_format.format(new Date(timestamp*1000L));
+        return d_format.format(new Date(timestamp * 1000L)); // Multiply by 1000 to convert timestamp to milliseconds
     }
 }

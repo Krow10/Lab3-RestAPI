@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setSupportActionBar((MaterialToolbar)(findViewById(R.id.appbar)));
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null) { // First time running the activity
             frag_manager = new CollectionWeatherFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.main_container, frag_manager).commit();
             frag_manager.setTabLayout(findViewById(R.id.forecast_tabs_layout));
@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
             v.setEnabled(false); // Prevent refresh spamming
         });
 
+        // Setup the change location icon actions
         MenuItem location_item = menu.findItem(R.id.action_change_location);
         location_item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
@@ -86,9 +87,10 @@ public class MainActivity extends AppCompatActivity {
         });
         location_item.setOnMenuItemClickListener(item -> {
             SearchView location_searchview = item.getActionView().findViewById(R.id.location_searchview);
-            location_searchview.setQuery("", false);
+            location_searchview.setQuery("", false); // Reset text in search field for quicker typing
             location_searchview.requestFocusFromTouch();
             showKeyboard();
+
             location_searchview.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
@@ -96,9 +98,10 @@ public class MainActivity extends AppCompatActivity {
                     if (!Objects.requireNonNull(cities_suggestions).isEmpty()) {
                         Address new_city = cities_suggestions.get(0);
                         new CityPreferences(main).setCity((new_city.getLocality() == null ? new_city.getFeatureName() : new_city.getLocality())
-                                + ", " + new_city.getCountryCode());
+                                + ", " + new_city.getCountryCode()); // Format user input by using proper location spelling
                         frag_manager.refreshApiData(main);
                         location_item.collapseActionView();
+
                         return true;
                     } else {
                         if (error_toast != null)
@@ -106,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
                         error_toast = Toast.makeText(getApplicationContext(), getString(R.string.location_not_found_error_msg), Toast.LENGTH_LONG);
                         error_toast.show();
+
                         return false;
                     }
                 }

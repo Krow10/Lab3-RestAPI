@@ -3,7 +3,6 @@ package com.example.lab3_restapi.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,8 +25,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class WeatherHourlyFragment extends WeatherFragment {
+    private ArrayList<APIData.WeatherData> current_hourly_forecast;
     private WeatherForecastAdapter hourly_adapter;
-    private ArrayList<APIData.WeatherData> current;
 
     private class WeatherForecastAdapter extends RecyclerView.Adapter<WeatherForecastAdapter.ViewHolder> {
         private final ArrayList<APIData.WeatherData> forecast;
@@ -123,21 +122,19 @@ public class WeatherHourlyFragment extends WeatherFragment {
         RecyclerView hourly_view;
         View rootView = inflater.inflate(R.layout.weather_hourly, container, false);
         rootView.setAlpha(0f);
-        if (savedInstanceState != null){
+
+        // Makes the loading of the hourly forecast tab faster by restoring previously saved data
+        if (savedInstanceState != null) {
             //noinspection unchecked
             hourly_adapter = new WeatherForecastAdapter((ArrayList<APIData.WeatherData>) savedInstanceState.get("weather_data"));
-            hourly_view = rootView.findViewById(R.id.w_hourly_recyclerview);
-            hourly_view.setLayoutManager(new LinearLayoutManager(getContext()));
-            hourly_view.setAdapter(hourly_adapter);
-        } else {
+        } else if (current_hourly_forecast != null) {
             hourly_adapter = new WeatherForecastAdapter(new ArrayList<>());
-            hourly_view = rootView.findViewById(R.id.w_hourly_recyclerview);
-            hourly_view.setLayoutManager(new LinearLayoutManager(getContext()));
-            hourly_view.setAdapter(hourly_adapter);
-
-            if (current != null)
-                updateWeatherData(getContext(), current);
+            updateWeatherData(getContext(), current_hourly_forecast);
         }
+
+        hourly_view = rootView.findViewById(R.id.w_hourly_recyclerview);
+        hourly_view.setLayoutManager(new LinearLayoutManager(getContext()));
+        hourly_view.setAdapter(hourly_adapter);
 
         rootView.animate().alpha(1f).setDuration(getResources().getInteger(R.integer.tab_content_fade_in_anim_speed)).setInterpolator(new DecelerateInterpolator()).start();
         return rootView;
@@ -146,13 +143,13 @@ public class WeatherHourlyFragment extends WeatherFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("weather_data", (ArrayList<? extends Parcelable>) current);
+        outState.putParcelableArrayList("weather_data", current_hourly_forecast);
     }
 
     @Override
     public void updateWeatherData(Context ctx, ArrayList<APIData.WeatherData> new_forecast) {
         if (getView() != null) {
-            current = new_forecast;
+            current_hourly_forecast = new_forecast;
             hourly_adapter.updateForecast(new_forecast);
         } else {
             new Handler().postDelayed(() -> updateWeatherData(ctx, new_forecast), ctx.getResources().getInteger(R.integer.api_retry_delay_ms)* 10L); // TODO : Change this

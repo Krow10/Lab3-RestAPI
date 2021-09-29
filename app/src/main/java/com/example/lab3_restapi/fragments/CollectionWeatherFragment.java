@@ -33,15 +33,14 @@ import java.text.DateFormat;
 import java.util.Calendar;
 
 public class CollectionWeatherFragment extends Fragment {
-    WeatherCollectionAdapter weatherCollectionAdapter;
-    TabLayout tabLayout;
-    ViewPager2 viewPager;
     private APIData api_data;
+    private WeatherCollectionAdapter weatherCollectionAdapter;
+    private TabLayout tabLayout;
+    private ViewPager2 viewPager;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.weather_viewpager, container, false);
     }
 
@@ -57,22 +56,24 @@ public class CollectionWeatherFragment extends Fragment {
                 switch (position) {
                     case 0:
                         tab_title = getString(R.string.tab_live);
+                        // Setup live tab red dot blink for 'REC' effect
                         BadgeDrawable rec_icon = tab.getOrCreateBadge();
                         rec_icon.setHorizontalOffset(dpToPixels(getResources(), -3.5f));
                         rec_icon.setVerticalOffset(dpToPixels(getResources(), .5f));
 
                         final ObjectAnimator colorAnim = ObjectAnimator.ofInt(rec_icon, "backgroundColor", rec_icon.getBackgroundColor(), Color.TRANSPARENT);
-                            colorAnim.setDuration(getResources().getInteger(R.integer.live_icon_blinking_anim_speed));
-                            colorAnim.setEvaluator(new ArgbEvaluator());
-                            colorAnim.setInterpolator(new FastOutSlowInInterpolator());
-                            colorAnim.setRepeatCount(ValueAnimator.INFINITE);
-                            colorAnim.setRepeatMode(ValueAnimator.REVERSE);
+                        colorAnim.setDuration(getResources().getInteger(R.integer.live_icon_blinking_anim_speed));
+                        colorAnim.setEvaluator(new ArgbEvaluator());
+                        colorAnim.setInterpolator(new FastOutSlowInInterpolator());
+                        colorAnim.setRepeatCount(ValueAnimator.INFINITE);
+                        colorAnim.setRepeatMode(ValueAnimator.REVERSE);
                         colorAnim.start();
                         break;
                     case 1:
                         tab_title = getString(R.string.tab_today);
                         break;
                     default:
+                        // Convert tab position to full date for the next days
                         Calendar pos_to_date = Calendar.getInstance();
                         pos_to_date.add(Calendar.DAY_OF_YEAR, position - 1);
                         tab_title = DateFormat.getDateInstance(DateFormat.MEDIUM).format(pos_to_date.getTime());
@@ -89,6 +90,7 @@ public class CollectionWeatherFragment extends Fragment {
             final JSONObject data = FetchData.fetchAPIData(activity.getApplicationContext(), city);
             if (data != null) {
                 api_data = new APIData(data, city);
+                // Run on UI thread to enable updating the information on the fragments' layout.
                 activity.runOnUiThread(() -> weatherCollectionAdapter.refreshFragmentsData(activity.getApplicationContext(), api_data));
             } else {
                 Log.e(getTag(), "Unable to fetch API data.");
