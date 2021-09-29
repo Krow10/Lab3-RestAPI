@@ -18,6 +18,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class WeatherDailyFragment extends WeatherFragment {
     private APIData.WeatherData current;
@@ -46,27 +47,16 @@ public class WeatherDailyFragment extends WeatherFragment {
             Log.d(this.getTag(), "Updated hourly weather data !");
             updateFields();
         } else { // TODO : Add placeholder animations
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    updateWeatherData(ctx, current_);
-                }
-            }, ctx.getResources().getInteger(R.integer.api_retry_delay_ms));
+            new Handler().postDelayed(() -> updateWeatherData(ctx, current_), ctx.getResources().getInteger(R.integer.api_retry_delay_ms));
         }
     }
 
     private void updateFields() {
-        // TODO : Check for empty weather data
-        // TODO : Add constant strings to xml file
-        final String temp = current.temp + " °C (feels like " + current.feels_like + " °C)";
-        final String update_time = "Last updated at " + timestampToDate(current.timestamp);
         final String weather_icon_url = "http://openweathermap.org/img/wn/" + current.icon_url + "@2x.png";
-        final String details = current.description
-                + "\nHumidity : " + current.humidity
-                + "\nPressure : " + current.pressure
-                + "\nSunrise : " + timestampToDate(current.sunrise)
-                + "\nSunset : " + timestampToDate(current.sunset);
 
-        Picasso.get().load(weather_icon_url).placeholder(new CircularProgressIndicator(getContext()).getIndeterminateDrawable()).into(weatherIcon);
+        Picasso.get()
+                .load(weather_icon_url)
+                .placeholder(Objects.requireNonNull(new CircularProgressIndicator(requireContext()).getIndeterminateDrawable()))
+                .into(weatherIcon);
     }
 }

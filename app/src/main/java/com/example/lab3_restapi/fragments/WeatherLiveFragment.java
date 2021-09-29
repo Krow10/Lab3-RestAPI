@@ -1,6 +1,7 @@
 package com.example.lab3_restapi.fragments;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
@@ -31,6 +32,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 public class WeatherLiveFragment extends WeatherFragment {
     private APIData.WeatherData current;
@@ -88,28 +90,23 @@ public class WeatherLiveFragment extends WeatherFragment {
             Log.d(this.getTag(), "Updated live weather data !");
             updateFields();
         } else { // TODO : Add placeholder animations
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    updateWeatherData(ctx, current_);
-                }
-            }, ctx.getResources().getInteger(R.integer.api_retry_delay_ms));
+            new Handler().postDelayed(() -> updateWeatherData(ctx, current_), ctx.getResources().getInteger(R.integer.api_retry_delay_ms));
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void updateFields() {
         // TODO : Check for empty weather data
-        // TODO : Add constant strings to xml fil
 
         final int icon_id = getIconID(getContext(), current.icon_url);
         final String temp = new DecimalFormat("0.#").format(current.temp); // TODO : Make °C / °F user preferences
-        final String feels_temp = "°C\nfeels\nlike " + formatDecimal(current.feels_like);
+        final String feels_temp = getResources().getString(R.string.feels_like) + formatDecimal(current.feels_like);
         SpannableString formatted_feels_temp = new SpannableString(feels_temp);
             formatted_feels_temp.setSpan(new StyleSpan(Typeface.BOLD), 0, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         final String wind_direction = getDirectionFromAngle(current.wind_deg);
 
         RotateDrawable wind_dir_icon = (RotateDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_wind_dir_animated, null);
-        wind_dir_icon.setColorFilter(ResourcesCompat.getColor(getResources(), R.color.ic_details_fill, null), PorterDuff.Mode.SRC_IN);
+        Objects.requireNonNull(wind_dir_icon).setColorFilter(ResourcesCompat.getColor(getResources(), R.color.ic_details_fill, null), PorterDuff.Mode.SRC_IN);
         wind_dir_icon.setFromDegrees(old_wind_deg);
         wind_dir_icon.setToDegrees((float) current.wind_deg);
         old_wind_deg = (float) current.wind_deg;
@@ -119,11 +116,11 @@ public class WeatherLiveFragment extends WeatherFragment {
         anim.start();
 
         final String device_local_time = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date().getTime());
-        final String update_time = "Last updated at " + device_local_time;
+        final String update_time = getResources().getString(R.string.last_updated) + device_local_time;
 
         city.setText(current.city);
         local_time.setText("Local time : " + timestampToDate(current.timestamp));
-        weather_icon.setImageResource(icon_id != 0 ? icon_id : null);
+        weather_icon.setImageResource(icon_id != 0 ? icon_id : R.drawable.ic_baseline_cached_24);
         weather_desc.setText(current.description);
         current_temperature.setText(temp);
         feels_temperature.setText(formatted_feels_temp);
@@ -153,7 +150,7 @@ public class WeatherLiveFragment extends WeatherFragment {
 
     // From @Reverend Gonzo (https://stackoverflow.com/a/2131294)
     private String getDirectionFromAngle(final double angle) {
-        String directions[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
+        String[] directions = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
         return directions[(int)Math.round(((angle % 360) / 45)) % 8];
     }
 
@@ -169,7 +166,7 @@ public class WeatherLiveFragment extends WeatherFragment {
 
     private void loadIconText(TextView tv, int id, int color_id) {
         Drawable d = ResourcesCompat.getDrawable(getResources(), id, null);
-        d.setColorFilter(ResourcesCompat.getColor(getResources(), color_id, null), PorterDuff.Mode.SRC_IN);
+        Objects.requireNonNull(d).setColorFilter(ResourcesCompat.getColor(getResources(), color_id, null), PorterDuff.Mode.SRC_IN);
         tv.setCompoundDrawablesRelativeWithIntrinsicBounds(d, null, null, null);
         tv.setCompoundDrawablePadding(15);
     }

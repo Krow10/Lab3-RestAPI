@@ -11,7 +11,7 @@ import com.example.lab3_restapi.APIData;
 import java.util.ArrayList;
 
 public class WeatherCollectionAdapter extends FragmentStateAdapter {
-    private ArrayList<Fragment> weather_fragments;
+    private final ArrayList<Fragment> weather_fragments;
 
     public WeatherCollectionAdapter(Fragment fragment) {
         super(fragment);
@@ -27,8 +27,7 @@ public class WeatherCollectionAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        Fragment fragment = weather_fragments.get(position);
-        return fragment;
+        return weather_fragments.get(position);
     }
 
     @Override
@@ -49,6 +48,7 @@ public class WeatherCollectionAdapter extends FragmentStateAdapter {
             } else {
                 ArrayList<APIData.WeatherData> new_data = new ArrayList<>();
                 new_data.add(data.getDailyWeatherData(i - 1));
+                assert (f) instanceof WeatherDailyFragment;
                 ((WeatherDailyFragment) (f)).updateWeatherData(ctx, new_data);
             }
         }

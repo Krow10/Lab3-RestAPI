@@ -43,10 +43,7 @@ public class FetchData {
 
         try {
             return future.get(); // Blocking call
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return null;
         }
@@ -57,7 +54,7 @@ public class FetchData {
         List<Address> addresses = getCitySuggestions(context, city);
 
         if (addresses != null) {
-            List<LatLng> ll = new ArrayList<LatLng>(addresses.size()); // A list to save the coordinates if they are available
+            List<LatLng> ll = new ArrayList<>(addresses.size()); // A list to save the coordinates if they are available
             for (Address a : addresses) {
                 if (a.hasLatitude() && a.hasLongitude()) {
                     ll.add(new LatLng(a.getLatitude(), a.getLongitude()));

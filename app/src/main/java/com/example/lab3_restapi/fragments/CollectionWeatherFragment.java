@@ -84,24 +84,16 @@ public class CollectionWeatherFragment extends Fragment {
     }
 
     public void refreshApiData(Activity activity) {
-        new Thread() {
-            @Override
-            public void run() {
-                final String city =  new CityPreferences(activity).getCity();
-                final JSONObject data = FetchData.fetchAPIData(activity.getApplicationContext(), city);
-                if (data != null) {
-                    api_data = new APIData(data, city);
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            weatherCollectionAdapter.refreshFragmentsData(activity.getApplicationContext(), api_data);
-                        }
-                    });
-                } else {
-                    Log.e(getTag(), "Unable to fetch API data.");
-                }
+        new Thread(() -> {
+            final String city =  new CityPreferences(activity).getCity();
+            final JSONObject data = FetchData.fetchAPIData(activity.getApplicationContext(), city);
+            if (data != null) {
+                api_data = new APIData(data, city);
+                activity.runOnUiThread(() -> weatherCollectionAdapter.refreshFragmentsData(activity.getApplicationContext(), api_data));
+            } else {
+                Log.e(getTag(), "Unable to fetch API data.");
             }
-        }.start();
+        }).start();
     }
 
     public void setTabLayout(TabLayout tab) {

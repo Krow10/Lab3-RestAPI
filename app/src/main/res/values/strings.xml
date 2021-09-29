@@ -6,4 +6,13 @@
     <!-- Tabs header -->
     <string name="tab_live">Live</string>
     <string name="tab_today">Today</string>
+
+    <!-- Live tab contents -->
+    <string name="feels_like">°C\nfeels\nlike </string>
+    <string name="last_updated">Last updated at </string>
+
+    <!-- Accessibility descriptions -->
+    <string name="iv_refresh_data_desc">Actualize the weather data</string>
+    <string name="w_icon_desc">Weather preview</string>
+    <string name="change_location_desc">Change the location for weather forecast</string>
 </resources>

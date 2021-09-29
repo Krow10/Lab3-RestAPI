@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 
 public class CityPreferences {
-    private SharedPreferences prefs;
+    private final SharedPreferences prefs;
 
     public CityPreferences(Activity activity){
         prefs = activity.getPreferences(Activity.MODE_PRIVATE);
@@ -15,6 +15,6 @@ public class CityPreferences {
     }
 
     void setCity(String city){
-        prefs.edit().putString("city", city).commit();
+        prefs.edit().putString("city", city).apply();
     }
 }

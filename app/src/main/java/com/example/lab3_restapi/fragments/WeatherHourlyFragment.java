@@ -23,14 +23,14 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class WeatherHourlyFragment extends WeatherFragment {
-    private RecyclerView hourly_view;
     private WeatherForecastAdapter hourly_adapter;
     private ArrayList<APIData.WeatherData> current;
 
     private class WeatherForecastAdapter extends RecyclerView.Adapter<WeatherForecastAdapter.ViewHolder> {
-        private ArrayList<APIData.WeatherData> forecast;
+        private final ArrayList<APIData.WeatherData> forecast;
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             private final TextView forecast_time;
@@ -90,7 +90,10 @@ public class WeatherHourlyFragment extends WeatherFragment {
                     + " / Pressure : " + hour.pressure;
 
             holder.getForecastTime().setText(time);
-            Picasso.get().load(weather_icon_url).placeholder(new CircularProgressIndicator(getContext()).getIndeterminateDrawable()).into(holder.getForecastIcon());
+            Picasso.get()
+                    .load(weather_icon_url)
+                    .placeholder(Objects.requireNonNull(new CircularProgressIndicator(requireContext()).getIndeterminateDrawable()))
+                    .into(holder.getForecastIcon());
             holder.getForecastTemp().setText(temp);
             holder.getForecastDetails().setText(details);
         }
@@ -102,9 +105,12 @@ public class WeatherHourlyFragment extends WeatherFragment {
 
         public void updateForecast(ArrayList<APIData.WeatherData> f) {
             if (f != null && f.size() > 0) {
-                forecast = f;
+                for (int i = 0; i < f.size(); ++i) {
+                    forecast.set(i, f.get(i));
+                    notifyItemChanged(i);
+                }
+
                 Log.d(getTag(), "Updating forecast : " + forecast);
-                notifyDataSetChanged();
             }
         }
     }
@@ -114,9 +120,11 @@ public class WeatherHourlyFragment extends WeatherFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        RecyclerView hourly_view;
         View rootView = inflater.inflate(R.layout.weather_hourly, container, false);
         rootView.setAlpha(0f);
         if (savedInstanceState != null){
+            //noinspection unchecked
             hourly_adapter = new WeatherForecastAdapter((ArrayList<APIData.WeatherData>) savedInstanceState.get("weather_data"));
             hourly_view = rootView.findViewById(R.id.w_hourly_recyclerview);
             hourly_view.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -147,12 +155,7 @@ public class WeatherHourlyFragment extends WeatherFragment {
             current = new_forecast;
             hourly_adapter.updateForecast(new_forecast);
         } else {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    updateWeatherData(ctx, new_forecast);
-                }
-            }, ctx.getResources().getInteger(R.integer.api_retry_delay_ms)*10); // TODO : Change this
+            new Handler().postDelayed(() -> updateWeatherData(ctx, new_forecast), ctx.getResources().getInteger(R.integer.api_retry_delay_ms)* 10L); // TODO : Change this
         }
     }
 }

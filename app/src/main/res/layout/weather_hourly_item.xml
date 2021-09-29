@@ -16,6 +16,7 @@
 
         <ImageView
             android:id="@+id/w_hourly_icon"
+            android:contentDescription="@string/w_icon_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

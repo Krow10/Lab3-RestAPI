@@ -13,10 +13,10 @@ import java.util.function.Function;
 
 public class APIData {
     private WeatherData current;
-    private ArrayList<WeatherData> hourly;
-    private ArrayList<WeatherData> daily;
+    private final ArrayList<WeatherData> hourly;
+    private final ArrayList<WeatherData> daily;
 
-    public final class WeatherData implements Parcelable {
+    public static final class WeatherData implements Parcelable {
         public long timestamp;
         public long sunrise;
         public long sunset;
@@ -29,6 +29,35 @@ public class APIData {
         public String city;
         public String description;
         public String icon_url;
+
+        public WeatherData() {}
+
+        protected WeatherData(Parcel in) {
+            timestamp = in.readLong();
+            sunrise = in.readLong();
+            sunset = in.readLong();
+            temp = in.readDouble();
+            feels_like = in.readDouble();
+            pressure = in.readDouble();
+            humidity = in.readDouble();
+            wind_speed = in.readDouble();
+            wind_deg = in.readDouble();
+            city = in.readString();
+            description = in.readString();
+            icon_url = in.readString();
+        }
+
+        public final Creator<WeatherData> CREATOR = new Creator<WeatherData>() {
+            @Override
+            public WeatherData createFromParcel(Parcel in) {
+                return new WeatherData(in);
+            }
+
+            @Override
+            public WeatherData[] newArray(int size) {
+                return new WeatherData[size];
+            }
+        };
 
         @Override
         public int describeContents() {
@@ -93,7 +122,7 @@ public class APIData {
     private WeatherData parseWeatherData(JSONObject obj, final String city, long timezone_offset) { // TODO : Parse differently for live, hourly and daily
         try {
             JSONObject current_weather = obj.getJSONArray("weather").getJSONObject(0);
-            Function<Long, Long> changeTimezone = (Function<Long, Long>) l -> Long.valueOf(l + timezone_offset);
+            Function<Long, Long> changeTimezone = (Function<Long, Long>) l -> l + timezone_offset;
 
             WeatherData w = new WeatherData();
             w.city = city;

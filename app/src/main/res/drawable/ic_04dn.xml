@@ -1,9 +1,11 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
+    xmlns:tools="http://schemas.android.com/tools"
     android:width="66.92dp"
     android:height="36.44dp"
     android:viewportWidth="66.92"
-    android:viewportHeight="36.44">
+    android:viewportHeight="36.44"
+    tools:keep="@drawable/ic_04dn">
   <path
       android:pathData="M46,36.44a10.66,10.66 0,0 0,0 -21.33h-0.11A17,17 0,0 0,13.45 10H13.2a13.2,13.2 0,0 0,0 26.4"
       android:fillColor="#fff"/>
