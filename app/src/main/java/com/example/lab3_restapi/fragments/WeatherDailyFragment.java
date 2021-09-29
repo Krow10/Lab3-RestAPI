@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
@@ -16,7 +17,7 @@ import com.example.lab3_restapi.R;
 import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class WeatherDailyFragment extends WeatherFragment {
     private APIData.WeatherData current;
@@ -28,16 +29,18 @@ public class WeatherDailyFragment extends WeatherFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.weather_daily, container, false);
+        rootView.setAlpha(0f);
         weatherIcon = (ImageView) rootView.findViewById(R.id.w_daily_icon);
 
         if (current != null)
             updateFields();
 
+        rootView.animate().alpha(1f).setDuration(getResources().getInteger(R.integer.tab_content_fade_in_anim_speed)).setInterpolator(new DecelerateInterpolator()).start();
         return rootView;
     }
 
     @Override
-    public void updateWeatherData(Context ctx, List<APIData.WeatherData> current_) {
+    public void updateWeatherData(Context ctx, ArrayList<APIData.WeatherData> current_) {
         if (getView() != null) {
             current = current_.get(0);
             Log.d(this.getTag(), "Updated hourly weather data !");

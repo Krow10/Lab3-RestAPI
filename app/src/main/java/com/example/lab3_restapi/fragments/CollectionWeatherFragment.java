@@ -4,6 +4,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -57,8 +58,8 @@ public class CollectionWeatherFragment extends Fragment {
                     case 0:
                         tab_title = getString(R.string.tab_live);
                         BadgeDrawable rec_icon = tab.getOrCreateBadge();
-                        rec_icon.setHorizontalOffset(dpToPixels(-3.5f));
-                        rec_icon.setVerticalOffset(dpToPixels(.5f));
+                        rec_icon.setHorizontalOffset(dpToPixels(getResources(), -3.5f));
+                        rec_icon.setVerticalOffset(dpToPixels(getResources(), .5f));
 
                         final ObjectAnimator colorAnim = ObjectAnimator.ofInt(rec_icon, "backgroundColor", rec_icon.getBackgroundColor(), Color.TRANSPARENT);
                             colorAnim.setDuration(getResources().getInteger(R.integer.live_icon_blinking_anim_speed));
@@ -107,7 +108,7 @@ public class CollectionWeatherFragment extends Fragment {
         tabLayout = tab;
     }
 
-    private int dpToPixels(float dip) {
-        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dip, getResources().getDisplayMetrics()));
+    public static int dpToPixels(Resources res, float dip) {
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dip, res.getDisplayMetrics()));
     }
 }

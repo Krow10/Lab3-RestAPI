@@ -3,10 +3,12 @@ package com.example.lab3_restapi.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,15 +23,14 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class WeatherHourlyFragment extends WeatherFragment {
     private RecyclerView hourly_view;
     private WeatherForecastAdapter hourly_adapter;
-    private List<APIData.WeatherData> current;
+    private ArrayList<APIData.WeatherData> current;
 
     private class WeatherForecastAdapter extends RecyclerView.Adapter<WeatherForecastAdapter.ViewHolder> {
-        private List<APIData.WeatherData> forecast;
+        private ArrayList<APIData.WeatherData> forecast;
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             private final TextView forecast_time;
@@ -63,7 +64,7 @@ public class WeatherHourlyFragment extends WeatherFragment {
             }
         }
 
-        public WeatherForecastAdapter(List<APIData.WeatherData> data) {
+        public WeatherForecastAdapter(ArrayList<APIData.WeatherData> data) {
             forecast = new ArrayList<>();
             updateForecast(data);
         }
@@ -99,7 +100,7 @@ public class WeatherHourlyFragment extends WeatherFragment {
             return forecast.size();
         }
 
-        public void updateForecast(List<APIData.WeatherData> f) {
+        public void updateForecast(ArrayList<APIData.WeatherData> f) {
             if (f != null && f.size() > 0) {
                 forecast = f;
                 Log.d(getTag(), "Updating forecast : " + forecast);
@@ -114,19 +115,34 @@ public class WeatherHourlyFragment extends WeatherFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.weather_hourly, container, false);
-        hourly_adapter = new WeatherForecastAdapter(new ArrayList<>());
-        hourly_view = rootView.findViewById(R.id.w_hourly_recyclerview);
-        hourly_view.setLayoutManager(new LinearLayoutManager(getContext()));
-        hourly_view.setAdapter(hourly_adapter);
+        rootView.setAlpha(0f);
+        if (savedInstanceState != null){
+            hourly_adapter = new WeatherForecastAdapter((ArrayList<APIData.WeatherData>) savedInstanceState.get("weather_data"));
+            hourly_view = rootView.findViewById(R.id.w_hourly_recyclerview);
+            hourly_view.setLayoutManager(new LinearLayoutManager(getContext()));
+            hourly_view.setAdapter(hourly_adapter);
+        } else {
+            hourly_adapter = new WeatherForecastAdapter(new ArrayList<>());
+            hourly_view = rootView.findViewById(R.id.w_hourly_recyclerview);
+            hourly_view.setLayoutManager(new LinearLayoutManager(getContext()));
+            hourly_view.setAdapter(hourly_adapter);
 
-        if (current != null)
-            updateWeatherData(getContext(), current);
+            if (current != null)
+                updateWeatherData(getContext(), current);
+        }
 
+        rootView.animate().alpha(1f).setDuration(getResources().getInteger(R.integer.tab_content_fade_in_anim_speed)).setInterpolator(new DecelerateInterpolator()).start();
         return rootView;
     }
 
     @Override
-    public void updateWeatherData(Context ctx, List<APIData.WeatherData> new_forecast) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("weather_data", (ArrayList<? extends Parcelable>) current);
+    }
+
+    @Override
+    public void updateWeatherData(Context ctx, ArrayList<APIData.WeatherData> new_forecast) {
         if (getView() != null) {
             current = new_forecast;
             hourly_adapter.updateForecast(new_forecast);

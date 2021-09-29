@@ -7,12 +7,12 @@ import androidx.fragment.app.Fragment;
 import com.example.lab3_restapi.APIData;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 
 public abstract class WeatherFragment extends Fragment {
-    public abstract void updateWeatherData(Context ctx, List<APIData.WeatherData> current);
+    public abstract void updateWeatherData(Context ctx, ArrayList<APIData.WeatherData> current);
 
     public static String timestampToDate(long timestamp) {
         DateFormat d_format = DateFormat.getTimeInstance(DateFormat.SHORT);

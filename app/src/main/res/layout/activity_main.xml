@@ -5,33 +5,39 @@
     tools:context=".MainActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/bg_gradient_page_start">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?attr/colorPrimary"
-            android:elevation="0dp"
             app:title="@string/app_name"
             app:menu="@menu/app_bar_menu"
-            android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
-            style="@style/Widget.MaterialComponents.Toolbar.Primary"/>
+            style="@style/Widget.MaterialComponents.Toolbar.Transparent"
+            android:elevation="0dp"/>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/forecast_tabs_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabMode="scrollable">
+            app:tabMode="scrollable"
+            android:background="@android:color/transparent">
 
         </com.google.android.material.tabs.TabLayout>
     </com.google.android.material.appbar.AppBarLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:background="@drawable/bg_appbar_shadow"/>
 
     <LinearLayout
         android:id="@+id/main_container"

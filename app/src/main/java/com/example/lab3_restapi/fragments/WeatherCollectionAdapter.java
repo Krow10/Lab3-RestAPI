@@ -9,7 +9,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.example.lab3_restapi.APIData;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class WeatherCollectionAdapter extends FragmentStateAdapter {
     private ArrayList<Fragment> weather_fragments;
@@ -40,12 +39,18 @@ public class WeatherCollectionAdapter extends FragmentStateAdapter {
     public void refreshFragmentsData(Context ctx, APIData data) {
         for (int i = 0; i < getItemCount(); ++i) {
             Fragment f = weather_fragments.get(i);
-            if (f instanceof WeatherLiveFragment)
-                ((WeatherLiveFragment)(f)).updateWeatherData(ctx, Arrays.asList(data.getCurrentWeatherData()));
-            else if (f instanceof WeatherHourlyFragment && i == 1)
-                ((WeatherHourlyFragment)(f)).updateWeatherData(ctx, data.getHourlyWeatherData());
-            else
-                ((WeatherDailyFragment)(f)).updateWeatherData(ctx, Arrays.asList(data.getDailyWeatherData(i - 1)));
+
+            if (f instanceof WeatherLiveFragment) {
+                ArrayList<APIData.WeatherData> new_data = new ArrayList<>();
+                new_data.add(data.getCurrentWeatherData());
+                ((WeatherLiveFragment) (f)).updateWeatherData(ctx, new_data);
+            } else if (f instanceof WeatherHourlyFragment && i == 1) {
+                ((WeatherHourlyFragment) (f)).updateWeatherData(ctx, data.getHourlyWeatherData());
+            } else {
+                ArrayList<APIData.WeatherData> new_data = new ArrayList<>();
+                new_data.add(data.getDailyWeatherData(i - 1));
+                ((WeatherDailyFragment) (f)).updateWeatherData(ctx, new_data);
+            }
         }
     }
 }

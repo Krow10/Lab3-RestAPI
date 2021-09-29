@@ -1,5 +1,7 @@
 package com.example.lab3_restapi;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -7,16 +9,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
 
 public class APIData {
     private WeatherData current;
-    private List<WeatherData> hourly;
-    private List<WeatherData> daily;
+    private ArrayList<WeatherData> hourly;
+    private ArrayList<WeatherData> daily;
 
-    public final class WeatherData {
-        public String city;
+    public final class WeatherData implements Parcelable {
         public long timestamp;
         public long sunrise;
         public long sunset;
@@ -26,8 +26,30 @@ public class APIData {
         public double humidity;
         public double wind_speed;
         public double wind_deg;
+        public String city;
         public String description;
         public String icon_url;
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeLong(timestamp);
+            dest.writeLong(sunrise);
+            dest.writeLong(sunset);
+            dest.writeDouble(temp);
+            dest.writeDouble(feels_like);
+            dest.writeDouble(pressure);
+            dest.writeDouble(humidity);
+            dest.writeDouble(wind_speed);
+            dest.writeDouble(wind_deg);
+            dest.writeString(city);
+            dest.writeString(description);
+            dest.writeString(icon_url);
+        }
     }
 
     public APIData(JSONObject root, final String city) {
@@ -60,8 +82,8 @@ public class APIData {
         return current;
     }
 
-    public List<WeatherData> getHourlyWeatherData() {
-        return hourly.subList(0, 12);
+    public ArrayList<WeatherData> getHourlyWeatherData() {
+        return new ArrayList<>(hourly.subList(0, 12));
     }
 
     public WeatherData getDailyWeatherData(int day) {

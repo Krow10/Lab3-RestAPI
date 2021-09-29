@@ -2,5 +2,9 @@
 <resources>
     <integer name="api_retry_delay_ms">100</integer>
     <integer name="refresh_rotation_anim_speed">1000</integer>
+    <integer name="wind_dir_direction_anim_speed">2000</integer>
     <integer name="live_icon_blinking_anim_speed">600</integer>
+    <dimen name="layout_details_item_margin">12dp</dimen>
+    <dimen name="layout_sun_item_margin">24dp</dimen>
+    <integer name="tab_content_fade_in_anim_speed">750</integer>
 </resources>
