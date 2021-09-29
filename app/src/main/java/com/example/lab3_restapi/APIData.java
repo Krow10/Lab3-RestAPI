@@ -113,7 +113,7 @@ public class APIData {
     }
 
     public ArrayList<WeatherData> getHourlyWeatherData() {
-        return new ArrayList<>(hourly.subList(0, 12));
+        return new ArrayList<>(hourly.subList(0, 18));
     }
 
     public WeatherData getDailyWeatherData(int day) {

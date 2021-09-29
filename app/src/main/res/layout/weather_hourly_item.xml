@@ -1,35 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/w_hourly_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <ImageView
-            android:id="@+id/w_hourly_icon"
-            android:contentDescription="@string/w_icon_desc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/w_hourly_temp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-    </LinearLayout>
+    android:orientation="horizontal"
+    android:background="@drawable/bg_info_container"
+    android:layout_margin="6dp">
 
     <TextView
-        android:id="@+id/w_hourly_details"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:id="@+id/w_hourly_item_time"
+        android:layout_width="79dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/hourly_item_content_margin"
+        android:autoSizeTextType="uniform"
+        android:textSize="13pt"
+        android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Subtitle1"/>
+
+    <ImageView
+        android:id="@+id/w_hourly_item_weather_icon"
+        android:contentDescription="@string/w_icon_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginVertical="@dimen/hourly_item_content_margin"
+        android:layout_marginEnd="@dimen/hourly_item_content_margin"/>
+
+    <TextView
+        android:id="@+id/w_hourly_item_temp"
+        android:layout_width="76dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="@dimen/hourly_item_content_margin"
+        android:autoSizeTextType="uniform"
+        android:textSize="13pt"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Headline2"
+        tools:ignore="RtlCompat" />
+
+    <ImageView
+        android:id="@+id/w_hourly_item_wind_icon"
+        android:contentDescription="@string/w_icon_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="@dimen/hourly_item_content_margin"
+        android:layout_marginEnd="@dimen/hourly_item_content_margin"/>
+
+    <LinearLayout
+        android:id="@+id/w_hourly_item_wind_details_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/hourly_item_content_margin"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/w_hourly_item_wind_dir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:autoSizeTextType="uniform"
+            android:textSize="7pt"
+            android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Subtitle2"/>
+
+        <TextView
+            android:id="@+id/w_hourly_item_wind_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:autoSizeTextType="uniform"
+            android:textSize="7pt"
+            android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Subtitle2"/>
+
+    </LinearLayout>
 
 </LinearLayout>

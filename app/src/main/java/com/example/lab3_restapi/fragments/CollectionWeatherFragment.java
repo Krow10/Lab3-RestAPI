@@ -36,7 +36,6 @@ public class CollectionWeatherFragment extends Fragment {
     private APIData api_data;
     private WeatherCollectionAdapter weatherCollectionAdapter;
     private TabLayout tabLayout;
-    private ViewPager2 viewPager;
 
     @Nullable
     @Override
@@ -47,7 +46,7 @@ public class CollectionWeatherFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         weatherCollectionAdapter = new WeatherCollectionAdapter(this);
-        viewPager = view.findViewById(R.id.forecast_viewpager);
+        ViewPager2 viewPager = view.findViewById(R.id.forecast_viewpager);
         viewPager.setAdapter(weatherCollectionAdapter);
 
         if (tabLayout != null) {

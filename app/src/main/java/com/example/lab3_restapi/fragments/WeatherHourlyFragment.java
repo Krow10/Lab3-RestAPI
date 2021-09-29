@@ -1,6 +1,9 @@
 package com.example.lab3_restapi.fragments;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.RotateDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -13,16 +16,16 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lab3_restapi.APIData;
 import com.example.lab3_restapi.R;
-import com.google.android.material.progressindicator.CircularProgressIndicator;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.function.Function;
 
 public class WeatherHourlyFragment extends WeatherFragment {
     private ArrayList<APIData.WeatherData> current_hourly_forecast;
@@ -32,34 +35,46 @@ public class WeatherHourlyFragment extends WeatherFragment {
         private final ArrayList<APIData.WeatherData> forecast;
 
         public class ViewHolder extends RecyclerView.ViewHolder {
-            private final TextView forecast_time;
-            private final ImageView forecast_icon;
-            private final TextView forecast_temp;
-            private final TextView forecast_details;
+            private final TextView time;
+            private final ImageView weather_icon;
+            private final TextView temp;
+            private final ImageView wind_icon;
+            private final TextView wind_dir;
+            private final TextView wind_speed;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
 
-                forecast_time = itemView.findViewById(R.id.w_hourly_time);
-                forecast_icon = itemView.findViewById(R.id.w_hourly_icon);
-                forecast_temp = itemView.findViewById(R.id.w_hourly_temp);
-                forecast_details = itemView.findViewById(R.id.w_hourly_details);
+                time = itemView.findViewById(R.id.w_hourly_item_time);
+                weather_icon = itemView.findViewById(R.id.w_hourly_item_weather_icon);
+                temp = itemView.findViewById(R.id.w_hourly_item_temp);
+                wind_icon = itemView.findViewById(R.id.w_hourly_item_wind_icon);
+                wind_dir = itemView.findViewById(R.id.w_hourly_item_wind_dir);
+                wind_speed = itemView.findViewById(R.id.w_hourly_item_wind_speed);
             }
 
-            public TextView getForecastTime() {
-                return forecast_time;
+            public TextView getTime() {
+                return time;
             }
 
-            public ImageView getForecastIcon() {
-                return forecast_icon;
+            public ImageView getWeatherIcon() {
+                return weather_icon;
             }
 
-            public TextView getForecastTemp() {
-                return forecast_temp;
+            public TextView getTemp() {
+                return temp;
             }
 
-            public TextView getForecastDetails() {
-                return forecast_details;
+            public ImageView getWindIcon() {
+                return wind_icon;
+            }
+
+            public TextView getWindDir() {
+                return wind_dir;
+            }
+
+            public TextView getWindSpeed() {
+                return wind_speed;
             }
         }
 
@@ -78,23 +93,28 @@ public class WeatherHourlyFragment extends WeatherFragment {
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            // TODO : Add constant strings to xml file
             APIData.WeatherData hour = forecast.get(position);
+            Function<String, String> formatTime = s -> s.substring(0, s.indexOf(':')) + (s.contains("p") ? " PM" : " AM");
 
-            final String time = WeatherFragment.timestampToDate(hour.timestamp);
-            final String temp = hour.temp + " °C (feels like " + hour.feels_like + " °C)";
-            final String weather_icon_url = "http://openweathermap.org/img/wn/" + hour.icon_url + "@2x.png";
-            final String details = hour.description
-                    + " / Humidity : " + hour.humidity
-                    + " / Pressure : " + hour.pressure;
+            holder.getTime().setText(formatTime.apply(WeatherFragment.timestampToDate(hour.timestamp)));
 
-            holder.getForecastTime().setText(time);
-            Picasso.get()
-                    .load(weather_icon_url)
-                    .placeholder(Objects.requireNonNull(new CircularProgressIndicator(requireContext()).getIndeterminateDrawable()))
-                    .into(holder.getForecastIcon());
-            holder.getForecastTemp().setText(temp);
-            holder.getForecastDetails().setText(details);
+            final int icon_id = getIconID(getContext(), hour.icon_url);
+            holder.getWeatherIcon().setImageResource(icon_id != 0 ? icon_id : R.drawable.ic_baseline_cached_24);
+
+            holder.getTemp().setText(formatDecimal(hour.temp) + "°C"); // TODO : Change to user preference
+
+            RotateDrawable wind_dir_icon = (RotateDrawable) Objects.requireNonNull(ResourcesCompat.getDrawable(
+                    getResources(), R.drawable.ic_wind_dir_animated, null)).mutate(); // Call 'mutate()' to create a copy
+            Objects.requireNonNull(wind_dir_icon).setColorFilter(ResourcesCompat.getColor(
+                    getResources(), R.color.ic_details_fill, null), PorterDuff.Mode.SRC_IN);
+            wind_dir_icon.setToDegrees((float) hour.wind_deg);
+            // For some reasons, using 'setLevel' on the icon doesn't work so we use an object animator with duration of zero to adjust wind indicator
+            ObjectAnimator wind_dir_anim = ObjectAnimator.ofInt(wind_dir_icon, "level", 0, 10000);
+            wind_dir_anim.setDuration(0);
+            wind_dir_anim.start();
+            holder.getWindIcon().setImageDrawable(wind_dir_icon);
+            holder.getWindDir().setText(getDirectionFromAngle(hour.wind_deg));
+            holder.getWindSpeed().setText(formatDecimal(hour.wind_speed * 3.6f) + " km/h"); // TODO : Change to user preference
         }
 
         @Override

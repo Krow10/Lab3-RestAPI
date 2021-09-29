@@ -1,14 +1,23 @@
 package com.example.lab3_restapi.fragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.lab3_restapi.APIData;
+import com.example.lab3_restapi.CityPreferences;
+import com.example.lab3_restapi.FetchData;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class WeatherCollectionAdapter extends FragmentStateAdapter {
     private final ArrayList<Fragment> weather_fragments;
@@ -22,6 +31,29 @@ public class WeatherCollectionAdapter extends FragmentStateAdapter {
 
         for (int forecast_days = 7; forecast_days > 0; forecast_days--)
             weather_fragments.add(new WeatherDailyFragment());
+
+        // Setup live weather update
+        Timer timer = new Timer();
+        TimerTask doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    final Activity main = fragment.getActivity();
+                    final String city = new CityPreferences(Objects.requireNonNull(main)).getCity();
+                    final JSONObject data = FetchData.fetchAPIData(fragment.getContext(), city);
+                    if (data != null) {
+                        APIData api_data = new APIData(data, city);
+                        ArrayList<APIData.WeatherData> new_data = new ArrayList<>();
+                        new_data.add(api_data.getCurrentWeatherData());
+                        main.runOnUiThread (() -> ((WeatherLiveFragment)(createFragment(0))).updateWeatherData(fragment.getContext(), new_data));
+                    }
+                } catch (Exception e) {
+                    Log.e(getClass().getName(), "Error in live weather data update Timer : " + e.getMessage());
+                }
+            }
+        };
+
+        timer.schedule(doAsynchronousTask, 60000, 60000); // Run update every minute
     }
 
     @NonNull

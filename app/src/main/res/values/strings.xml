@@ -8,8 +8,8 @@
     <string name="tab_today">Today</string>
 
     <!-- Live tab contents -->
-    <string name="feels_like">°C\nfeels\nlike </string>
-    <string name="last_updated">Last updated at </string>
+    <string name="feels_like">°C\nfeels\nlike</string>
+    <string name="last_updated">Last updated at</string>
 
     <!-- Accessibility descriptions -->
     <string name="iv_refresh_data_desc">Actualize the weather data</string>

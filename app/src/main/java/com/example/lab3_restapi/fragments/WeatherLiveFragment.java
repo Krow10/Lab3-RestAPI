@@ -44,9 +44,9 @@ public class WeatherLiveFragment extends WeatherFragment {
     private ImageView weather_icon;
     private TextView weather_desc;
 
-    private LinearLayout details_layout;
     private TextView current_temperature;
     private TextView feels_temperature;
+    private LinearLayout details_layout;
     private TextView wind_dir;
     private TextView wind_speed;
     private TextView humidity;
@@ -62,7 +62,7 @@ public class WeatherLiveFragment extends WeatherFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        old_wind_deg = 0;
+        old_wind_deg = 0f;
         View rootView = inflater.inflate(R.layout.weather_live, container, false);
         rootView.setAlpha(0f);
 
@@ -72,9 +72,9 @@ public class WeatherLiveFragment extends WeatherFragment {
         weather_icon = (ImageView) rootView.findViewById(R.id.w_live_weather_icon);
         weather_desc = (TextView) rootView.findViewById(R.id.w_live_weather_desc);
 
-        details_layout = rootView.findViewById(R.id.w_live_details_layout);
         current_temperature = (TextView) rootView.findViewById(R.id.w_live_current_temperature);
         feels_temperature = (TextView) rootView.findViewById(R.id.w_live_feels_temperature);
+        details_layout = rootView.findViewById(R.id.w_live_details_layout);
         wind_dir = (TextView) rootView.findViewById(R.id.w_live_wind_dir);
         wind_speed = (TextView) rootView.findViewById(R.id.w_live_wind_speed);
         humidity = (TextView) rootView.findViewById(R.id.w_live_humidity);
@@ -112,17 +112,19 @@ public class WeatherLiveFragment extends WeatherFragment {
         weather_icon.setImageResource(icon_id != 0 ? icon_id : R.drawable.ic_baseline_cached_24);
         weather_desc.setText(current.description);
 
-        details_layout.setVisibility(View.VISIBLE);
         final String temp = new DecimalFormat("0.#").format(current.temp); // TODO : Make °C / °F user preferences
         current_temperature.setText(temp);
 
-        final String feels_temp = getResources().getString(R.string.feels_like) + formatDecimal(current.feels_like);
+        final String feels_temp = getResources().getString(R.string.feels_like) + " " + formatDecimal(current.feels_like);
         SpannableString formatted_feels_temp = new SpannableString(feels_temp);
         formatted_feels_temp.setSpan(new StyleSpan(Typeface.BOLD), 0, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         feels_temperature.setText(formatted_feels_temp);
 
-        RotateDrawable wind_dir_icon = (RotateDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_wind_dir_animated, null);
-        Objects.requireNonNull(wind_dir_icon).setColorFilter(ResourcesCompat.getColor(getResources(), R.color.ic_details_fill, null), PorterDuff.Mode.SRC_IN);
+        details_layout.setVisibility(View.VISIBLE);
+        RotateDrawable wind_dir_icon = (RotateDrawable) Objects.requireNonNull(ResourcesCompat.getDrawable(
+                getResources(), R.drawable.ic_wind_dir_animated, null)).mutate(); // Call 'mutate()' to create a copy
+        Objects.requireNonNull(wind_dir_icon).setColorFilter(ResourcesCompat.getColor(
+                getResources(), R.color.ic_details_fill, null), PorterDuff.Mode.SRC_IN);
         wind_dir_icon.setFromDegrees(old_wind_deg);
         wind_dir_icon.setToDegrees((float) current.wind_deg);
         old_wind_deg = (float) current.wind_deg;
@@ -149,25 +151,8 @@ public class WeatherLiveFragment extends WeatherFragment {
         loadIconText(sunset, R.drawable.ic_sunset, R.color.ic_sun_fill);
 
         final String device_local_time = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date().getTime());
-        final String update_time = getResources().getString(R.string.last_updated) + device_local_time;
+        final String update_time = getResources().getString(R.string.last_updated) + " " + device_local_time;
         updated.setText(update_time);
-    }
-
-    // From @Reverend Gonzo (https://stackoverflow.com/a/2131294)
-    private String getDirectionFromAngle(final double angle) {
-        String[] directions = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
-        return directions[(int)Math.round(((angle % 360) / 45)) % 8];
-    }
-
-    private String formatDecimal(final double d) {
-        return new DecimalFormat("0.#").format(d);
-    }
-
-    private int getIconID(Context context, String iconRef) {
-        if (iconRef.contains("03") || iconRef.contains("04"))
-            iconRef = iconRef.substring(0, 2) + "dn";
-
-        return context.getResources().getIdentifier("ic_" + iconRef, "drawable", context.getPackageName());
     }
 
     private void loadIconText(TextView tv, int id, int color_id) {
