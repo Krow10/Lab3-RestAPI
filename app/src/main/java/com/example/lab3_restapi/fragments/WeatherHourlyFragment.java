@@ -105,8 +105,13 @@ public class WeatherHourlyFragment extends WeatherFragment {
         public void updateForecast(ArrayList<APIData.WeatherData> f) {
             if (f != null && f.size() > 0) {
                 for (int i = 0; i < f.size(); ++i) {
-                    forecast.set(i, f.get(i));
-                    notifyItemChanged(i);
+                    if (i < forecast.size()) {
+                        forecast.set(i, f.get(i));
+                        notifyItemChanged(i);
+                    } else {
+                        forecast.add(f.get(i));
+                        notifyItemInserted(i);
+                    }
                 }
 
                 Log.d(getTag(), "Updating forecast : " + forecast);
@@ -127,9 +132,10 @@ public class WeatherHourlyFragment extends WeatherFragment {
         if (savedInstanceState != null) {
             //noinspection unchecked
             hourly_adapter = new WeatherForecastAdapter((ArrayList<APIData.WeatherData>) savedInstanceState.get("weather_data"));
-        } else if (current_hourly_forecast != null) {
+        } else {
             hourly_adapter = new WeatherForecastAdapter(new ArrayList<>());
-            updateWeatherData(getContext(), current_hourly_forecast);
+            if (current_hourly_forecast != null)
+                updateWeatherData(getContext(), current_hourly_forecast);
         }
 
         hourly_view = rootView.findViewById(R.id.w_hourly_recyclerview);
