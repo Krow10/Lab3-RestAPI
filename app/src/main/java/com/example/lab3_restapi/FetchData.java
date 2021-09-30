@@ -74,7 +74,7 @@ public class FetchData {
                 Geocoder gc = new Geocoder(context);
                 return gc.getFromLocationName(city, 5); // get the found Address Objects
             } catch (IOException | IndexOutOfBoundsException e) {
-                System.err.println("Unable to find this location (" + city + ") : " + e.getMessage());
+                Log.e("FetchData", "Unable to find this location (" + city + ") : " + e.getMessage());
             }
         }
 

@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.lab3_restapi.APIData;
-import com.example.lab3_restapi.CityPreferences;
 import com.example.lab3_restapi.FetchData;
+import com.example.lab3_restapi.UserPreferences;
 
 import org.json.JSONObject;
 
@@ -39,7 +39,7 @@ public class WeatherCollectionAdapter extends FragmentStateAdapter {
             public void run() {
                 try {
                     final Activity main = fragment.getActivity();
-                    final String city = new CityPreferences(Objects.requireNonNull(main)).getCity();
+                    final String city = new UserPreferences(Objects.requireNonNull(main)).getCity();
                     final JSONObject data = FetchData.fetchAPIData(fragment.getContext(), city);
                     if (data != null) {
                         APIData api_data = new APIData(data, city);
@@ -52,7 +52,7 @@ public class WeatherCollectionAdapter extends FragmentStateAdapter {
                 }
             }
         };
-
+        // TODO : Make user prefs ?
         timer.schedule(doAsynchronousTask, 60000, 60000); // Run update every minute
     }
 

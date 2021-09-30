@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:background="@drawable/bg_info_container"
-    android:layout_margin="6dp">
+    android:layout_margin="8dp">
 
     <TextView
         android:id="@+id/w_hourly_item_time"
-        android:layout_width="79dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/w_hourly_item_weather_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_gravity="center_vertical"
-        android:layout_marginStart="@dimen/hourly_item_content_margin"
+        android:layout_marginHorizontal="@dimen/hourly_item_content_margin"
         android:autoSizeTextType="uniform"
         android:textSize="13pt"
         android:textAppearance="@style/TextAppearance.MdcTypographyStyles.Subtitle1"/>
@@ -22,13 +27,21 @@
         android:contentDescription="@string/w_icon_desc"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
+        app:layout_constraintLeft_toRightOf="@id/w_hourly_item_time"
+        app:layout_constraintRight_toLeftOf="@id/w_hourly_item_temp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginVertical="@dimen/hourly_item_content_margin"
         android:layout_marginEnd="@dimen/hourly_item_content_margin"/>
 
     <TextView
         android:id="@+id/w_hourly_item_temp"
-        android:layout_width="76dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/w_hourly_item_weather_icon"
+        app:layout_constraintRight_toLeftOf="@id/w_hourly_item_wind_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="@dimen/hourly_item_content_margin"
         android:autoSizeTextType="uniform"
@@ -42,6 +55,10 @@
         android:contentDescription="@string/w_icon_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/w_hourly_item_temp"
+        app:layout_constraintRight_toLeftOf="@id/w_hourly_item_wind_details_layout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_gravity="center_vertical"
         android:layout_margin="@dimen/hourly_item_content_margin"
         android:layout_marginEnd="@dimen/hourly_item_content_margin"/>
@@ -50,6 +67,10 @@
         android:id="@+id/w_hourly_item_wind_details_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintLeft_toRightOf="@id/w_hourly_item_wind_icon"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginEnd="@dimen/hourly_item_content_margin"
         android:orientation="vertical"
         android:layout_gravity="center_vertical">
@@ -74,4 +95,4 @@
 
     </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

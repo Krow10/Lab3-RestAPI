@@ -3,10 +3,10 @@ package com.example.lab3_restapi;
 import android.app.Activity;
 import android.content.SharedPreferences;
 
-public class CityPreferences {
+public class UserPreferences {
     private final SharedPreferences prefs;
 
-    public CityPreferences(Activity activity){
+    public UserPreferences(Activity activity){
         prefs = activity.getPreferences(Activity.MODE_PRIVATE);
     }
 
@@ -16,5 +16,13 @@ public class CityPreferences {
 
     void setCity(String city){
         prefs.edit().putString("city", city).apply();
+    }
+
+    public String getUnits() {
+        return prefs.getString("units", "metric");
+    }
+
+    void setUnits(String unit) {
+        prefs.edit().putString("units", unit).apply();
     }
 }

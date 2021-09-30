@@ -20,9 +20,9 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.lab3_restapi.APIData;
-import com.example.lab3_restapi.CityPreferences;
 import com.example.lab3_restapi.FetchData;
 import com.example.lab3_restapi.R;
+import com.example.lab3_restapi.UserPreferences;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -85,7 +85,7 @@ public class CollectionWeatherFragment extends Fragment {
 
     public void refreshApiData(Activity activity) {
         new Thread(() -> {
-            final String city =  new CityPreferences(activity).getCity();
+            final String city =  new UserPreferences(activity).getCity();
             final JSONObject data = FetchData.fetchAPIData(activity.getApplicationContext(), city);
             if (data != null) {
                 api_data = new APIData(data, city);

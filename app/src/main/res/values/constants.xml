@@ -5,7 +5,7 @@
     <integer name="wind_dir_direction_anim_speed">2000</integer>
     <integer name="live_icon_blinking_anim_speed">600</integer>
     <dimen name="layout_details_item_margin">12dp</dimen>
-    <dimen name="layout_sun_item_margin">24dp</dimen>
+    <dimen name="layout_sun_item_margin">16dp</dimen>
     <integer name="tab_content_fade_in_anim_speed">750</integer>
-    <dimen name="hourly_item_content_margin">6dp</dimen>
+    <dimen name="hourly_item_content_margin">8dp</dimen>
 </resources>

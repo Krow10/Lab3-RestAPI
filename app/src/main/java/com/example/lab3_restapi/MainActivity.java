@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                     List<Address> cities_suggestions = FetchData.getCitySuggestions(getApplicationContext(), query);
                     if (!Objects.requireNonNull(cities_suggestions).isEmpty()) {
                         Address new_city = cities_suggestions.get(0);
-                        new CityPreferences(main).setCity((new_city.getLocality() == null ? new_city.getFeatureName() : new_city.getLocality())
+                        new UserPreferences(main).setCity((new_city.getLocality() == null ? new_city.getFeatureName() : new_city.getLocality())
                                 + ", " + new_city.getCountryCode()); // Format user input by using proper location spelling
                         frag_manager.refreshApiData(main);
                         location_item.collapseActionView();

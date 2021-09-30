@@ -93,7 +93,7 @@ public class WeatherLiveFragment extends WeatherFragment {
     }
 
     @Override
-    public void updateWeatherData(Context ctx, ArrayList<APIData.WeatherData> current_) { // TODO : Call this every minute for live data refresh
+    public void updateWeatherData(Context ctx, ArrayList<APIData.WeatherData> current_) {
         if (getView() != null) {
             current = current_.get(0); // Only one weather forecast for live data
             Log.d(this.getTag(), "Updated live weather data !");
@@ -112,7 +112,7 @@ public class WeatherLiveFragment extends WeatherFragment {
         weather_icon.setImageResource(icon_id != 0 ? icon_id : R.drawable.ic_baseline_cached_24);
         weather_desc.setText(current.description);
 
-        final String temp = new DecimalFormat("0.#").format(current.temp); // TODO : Make °C / °F user preferences
+        final String temp = new DecimalFormat("0.#").format(current.temp);
         current_temperature.setText(temp);
 
         final String feels_temp = getResources().getString(R.string.feels_like) + " " + formatDecimal(current.feels_like);
@@ -139,7 +139,7 @@ public class WeatherLiveFragment extends WeatherFragment {
         wind_dir.setCompoundDrawablesRelativeWithIntrinsicBounds(wind_dir_icon, null, null, null);
         wind_dir.setCompoundDrawablePadding(15);
 
-        wind_speed.setText(formatDecimal(current.wind_speed * 3.6f) + " km/h");
+        wind_speed.setText(formatDecimal(current.wind_speed * 3.6f) + " km/h"); // TODO : Change to user prefs
         loadIconText(wind_speed, R.drawable.ic_wind_speed, R.color.ic_details_fill);
         humidity.setText(formatDecimal(current.humidity) + " %");
         loadIconText(humidity, R.drawable.ic_humidity, R.color.ic_details_fill);

@@ -8,7 +8,7 @@
     <string name="tab_today">Today</string>
 
     <!-- Live tab contents -->
-    <string name="feels_like">°C\nfeels\nlike</string>
+    <string name="feels_like">°C\nfeels\nlike</string> <!-- TODO : Change to user prefs -->
     <string name="last_updated">Last updated at</string>
 
     <!-- Accessibility descriptions -->
