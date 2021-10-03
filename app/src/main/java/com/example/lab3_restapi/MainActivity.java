@@ -34,12 +34,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.appbar));
 
-        if (savedInstanceState == null) { // First time running the activity
-            frag_manager = new CollectionWeatherFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.main_container, frag_manager).commit();
-            frag_manager.setTabLayout(findViewById(R.id.forecast_tabs_layout));
-            frag_manager.refreshApiData(this);
-        }
+        frag_manager = new CollectionWeatherFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_container, frag_manager).commit();
+        frag_manager.setTabLayout(findViewById(R.id.forecast_tabs_layout));
+        frag_manager.refreshApiData(this);
     }
 
     @Override
@@ -130,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public boolean onQueryTextChange(String newText) { // TODO : Add suggestions ?
+                public boolean onQueryTextChange(String newText) {
                     return true;
                 }
             });
