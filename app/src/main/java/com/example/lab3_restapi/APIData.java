@@ -2,7 +2,6 @@ package com.example.lab3_restapi;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -107,8 +106,6 @@ public class APIData {
             JSONArray daily_weather = root.getJSONArray("daily");
             for (int i = 0; i < daily_weather.length(); i++)
                 daily.add(parseWeatherData(daily_weather.getJSONObject(i), city, timezone_offset));
-
-            Log.d(getClass().getName(), "Refresh : " + root.toString(4));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -126,7 +123,7 @@ public class APIData {
         return daily.get(day);
     }
 
-    private WeatherData parseWeatherData(JSONObject obj, final String city, long timezone_offset) { // TODO : Parse differently for live, hourly and daily
+    private WeatherData parseWeatherData(JSONObject obj, final String city, long timezone_offset) {
         try {
             JSONObject current_weather = obj.getJSONArray("weather").getJSONObject(0);
             Function<Long, Long> changeTimezone = l -> l + timezone_offset;

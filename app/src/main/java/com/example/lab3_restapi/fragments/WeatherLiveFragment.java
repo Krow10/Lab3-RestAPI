@@ -25,6 +25,7 @@ import androidx.core.content.res.ResourcesCompat;
 
 import com.example.lab3_restapi.APIData;
 import com.example.lab3_restapi.R;
+import com.example.lab3_restapi.UserPreferences;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -92,7 +93,7 @@ public class WeatherLiveFragment extends WeatherFragment {
             current = current_.get(0); // Only one weather forecast for live data
             Log.d(this.getTag(), "Updated live weather data !");
             updateFields(rootView);
-        } else { // TODO : Add placeholder animations
+        } else {
             new Handler().postDelayed(() -> updateWeatherData(ctx, current_), ctx.getResources().getInteger(R.integer.api_retry_delay_ms));
         }
     }
@@ -109,7 +110,9 @@ public class WeatherLiveFragment extends WeatherFragment {
         final String temp = new DecimalFormat("0.#").format(current.temp_day);
         current_temperature.setText(temp);
 
-        final String feels_temp = getResources().getString(R.string.feels_like) + " " + formatDecimal(current.feels_like);
+        final String feels_temp = new UserPreferences(getContext()).getTempUnit() + "\n"
+                + getResources().getString(R.string.feels_like) + " "
+                + formatDecimal(current.feels_like);
         SpannableString formatted_feels_temp = new SpannableString(feels_temp);
         formatted_feels_temp.setSpan(new StyleSpan(Typeface.BOLD), 0, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         feels_temperature.setText(formatted_feels_temp);
@@ -132,7 +135,8 @@ public class WeatherLiveFragment extends WeatherFragment {
         wind_dir.setCompoundDrawablesRelativeWithIntrinsicBounds(wind_dir_icon, null, null, null);
         wind_dir.setCompoundDrawablePadding(15);
 
-        wind_speed.setText(formatDecimal(current.wind_speed * 3.6f) + " km/h"); // TODO : Change to user prefs
+        wind_speed.setText(formatDecimal(current.wind_speed * (new UserPreferences(getContext()).getSpeedUnit().equals("mph") ? 1 : 3.6f)) + " "
+                + new UserPreferences(getContext()).getSpeedUnit());
         loadIconText(wind_speed, R.drawable.ic_wind_speed, R.color.ic_details_fill, "start");
         humidity.setText(formatDecimal(current.humidity) + " %");
         loadIconText(humidity, R.drawable.ic_humidity, R.color.ic_details_fill, "start");

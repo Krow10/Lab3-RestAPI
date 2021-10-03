@@ -2,23 +2,43 @@
     <string name="app_name">Lab3-RestAPI</string>
     <string name="city_search_hint">Search for city</string>
     <string name="location_not_found_error_msg">Unable to find this location</string>
+    <string name="settings">Settings</string>
 
     <!-- Tabs header -->
     <string name="tab_live">Live</string>
     <string name="tab_today">Today</string>
 
     <!-- Live tab content -->
-    <string name="feels_like">°C\nfeels\nlike</string> <!-- TODO : Change to user prefs -->
+    <string name="feels_like">feels\nlike</string>
     <string name="last_updated">Last updated at</string>
 
     <!-- Accessibility descriptions -->
     <string name="iv_refresh_data_desc">Actualize the weather data</string>
     <string name="w_icon_desc">Weather preview</string>
     <string name="change_location_desc">Change the location for weather forecast</string>
+    <string name="open_settings">Open settings</string>
 
     <!-- Daily tabs content -->
     <string name="temperature_forecast">Temperature forecast</string>
     <string name="morning">Morning</string>
     <string name="day">Day</string>
     <string name="evening">Evening</string>
+
+    <!-- Settings title and summaries -->
+    <string name="units_title">Units</string>
+    <string name="data_refresh_interval_title">Weather forecast refresh</string>
+    <string name="data_refresh_interval_summary">Set the time interval to update weather data</string>
+
+    <!-- Settings labels -->
+        <!-- Units -->
+        <string name="units_standard">Standard</string>
+        <string name="units_metric">Metric</string>
+        <string name="units_imperial">Imperial</string>
+
+        <!-- Update interval -->
+        <string name="data_refresh_interval_one_minute">1 minute</string>
+        <string name="data_refresh_interval_five_minute">5 minutes</string>
+        <string name="data_refresh_interval_ten_minute">10 minutes</string>
+        <string name="data_refresh_interval_thirty_minute">30 minutes</string>
+        <string name="data_refresh_interval_sixty_minute">60 minutes</string>
 </resources>

@@ -33,8 +33,9 @@ public class FetchData {
         String url = "https://api.openweathermap.org/data/2.5/onecall?"
                 + "lat=" + city_coordinates.latitude
                 + "&lon=" + city_coordinates.longitude
-                + "&units=metric" // TODO : Add units as user preference
+                + "&units=" + new UserPreferences(context).getUnits() // TODO : Add units as user preference
                 + "&appid=" + context.getResources().getString(R.string.api_key);
+        Log.d("FetchData", "Url : " + url);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, future, error -> System.err.println("Error fetching data  : " + error.getMessage()));

@@ -1,6 +1,7 @@
 package com.example.lab3_restapi.fragments;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.RotateDrawable;
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lab3_restapi.APIData;
 import com.example.lab3_restapi.R;
+import com.example.lab3_restapi.UserPreferences;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -91,6 +93,7 @@ public class WeatherHourlyFragment extends WeatherFragment {
             return new ViewHolder(view);
         }
 
+        @SuppressLint("SetTextI18n")
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             APIData.WeatherData hour = forecast.get(position);
@@ -101,7 +104,7 @@ public class WeatherHourlyFragment extends WeatherFragment {
             final int icon_id = getIconID(getContext(), hour.icon_url);
             holder.getWeatherIcon().setImageResource(icon_id != 0 ? icon_id : R.drawable.ic_baseline_cached_24);
 
-            holder.getTemp().setText(formatDecimal(hour.temp_day) + "°C"); // TODO : Change to user preference
+            holder.getTemp().setText(formatDecimal(hour.temp_day) + new UserPreferences(getContext()).getTempUnit());
 
             RotateDrawable wind_dir_icon = (RotateDrawable) Objects.requireNonNull(ResourcesCompat.getDrawable(
                     getResources(), R.drawable.ic_wind_dir_animated, null)).mutate(); // Call 'mutate()' to create a copy
@@ -114,7 +117,8 @@ public class WeatherHourlyFragment extends WeatherFragment {
             wind_dir_anim.start();
             holder.getWindIcon().setImageDrawable(wind_dir_icon);
             holder.getWindDir().setText(getDirectionFromAngle(hour.wind_deg));
-            holder.getWindSpeed().setText(formatDecimal(hour.wind_speed * 3.6f) + " km/h"); // TODO : Change to user preference
+            holder.getWindSpeed().setText(formatDecimal(hour.wind_speed * (new UserPreferences(getContext()).getSpeedUnit().equals("mph") ? 1 : 3.6f)) + " "
+                    + new UserPreferences(getContext()).getSpeedUnit());
         }
 
         @Override

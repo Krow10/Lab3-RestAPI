@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="units_labels">
+        <item>@string/units_standard</item>
+        <item>@string/units_metric</item>
+        <item>@string/units_imperial</item>
+    </array>
+
+    <array name="units_values">
+        <item>standard</item>
+        <item>metric</item>
+        <item>imperial</item>
+    </array>
+
+    <array name="data_refresh_interval_labels">
+        <item>@string/data_refresh_interval_one_minute</item>
+        <item>@string/data_refresh_interval_five_minute</item>
+        <item>@string/data_refresh_interval_ten_minute</item>
+        <item>@string/data_refresh_interval_thirty_minute</item>
+        <item>@string/data_refresh_interval_sixty_minute</item>
+    </array>
+
+    <!-- Explicitly set to string array to use default value property in 'user_settings.xml' -->
+    <string-array name="data_refresh_interval_values">
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>30</item>
+        <item>60</item>
+    </string-array>
+</resources>

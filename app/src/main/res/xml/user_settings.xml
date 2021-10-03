@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <DropDownPreference
+        android:key="units"
+        android:title="@string/units_title"
+        android:summary="%s"
+        android:entries="@array/units_labels"
+        android:entryValues="@array/units_values"
+        android:defaultValue="metric"/>
+
+    <DropDownPreference
+        android:key="data_refresh_interval"
+        android:title="@string/data_refresh_interval_title"
+        android:summary="@string/data_refresh_interval_summary"
+        android:entries="@array/data_refresh_interval_labels"
+        android:entryValues="@array/data_refresh_interval_values"
+        android:defaultValue="1"/>
+</PreferenceScreen>

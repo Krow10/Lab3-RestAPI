@@ -16,6 +16,7 @@ import androidx.core.content.res.ResourcesCompat;
 
 import com.example.lab3_restapi.APIData;
 import com.example.lab3_restapi.R;
+import com.example.lab3_restapi.UserPreferences;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +86,7 @@ public class WeatherDailyFragment extends WeatherFragment {
             current = current_.get(0);
             Log.d(this.getTag(), "Updated hourly weather data !");
             updateFields();
-        } else { // TODO : Add placeholder animations
+        } else {
             new Handler().postDelayed(() -> updateWeatherData(ctx, current_), ctx.getResources().getInteger(R.integer.api_retry_delay_ms));
         }
     }
@@ -97,13 +98,15 @@ public class WeatherDailyFragment extends WeatherFragment {
         weather_icon.setImageResource(icon_id != 0 ? icon_id : R.drawable.ic_baseline_cached_24);
         weather_desc.setText(current.description);
 
+        final String temp_unit = new UserPreferences(getContext()).getTempUnit();
         List<PointValue> temp_values = new ArrayList<>();
-        temp_values.add(new PointValue(0, (float) current.temp_morning).setLabel(formatDecimal(current.temp_morning) + "°C"));
-        temp_values.add(new PointValue(1, (float) current.temp_day).setLabel(formatDecimal(current.temp_day) + "°C"));
-        temp_values.add(new PointValue(2, (float) current.temp_evening).setLabel(formatDecimal(current.temp_evening) + "°C"));
+        temp_values.add(new PointValue(0, (float) current.temp_morning).setLabel(formatDecimal(current.temp_morning) + temp_unit));
+        temp_values.add(new PointValue(1, (float) current.temp_day).setLabel(formatDecimal(current.temp_day) + temp_unit));
+        temp_values.add(new PointValue(2, (float) current.temp_evening).setLabel(formatDecimal(current.temp_evening) + temp_unit));
 
-        temp_chart.getLineChartData().getLines().get(0).setValues(temp_values);
-        temp_chart.setLineChartData(temp_chart.getLineChartData()); // Update graph data
+        LineChartData updated_data = new LineChartData(temp_chart.getLineChartData());
+        updated_data.getLines().get(0).setValues(temp_values);
+        temp_chart.setLineChartData(updated_data); // Update graph data
 
         // Scale the y axis to prevent line chart to start from the lowest y value
         // From @lecho (https://github.com/lecho/hellocharts-android/issues/252#issuecomment-196530789)

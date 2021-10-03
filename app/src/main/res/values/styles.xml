@@ -2,6 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Widget.MaterialComponents.Toolbar.Transparent" parent="Widget.MaterialComponents.Toolbar.Primary">
         <item name="android:background">@null</item>
+        <item name="colorControlNormal">?colorOnPrimary</item>
     </style>
 
     <!-- Font styles -->
@@ -39,26 +40,31 @@
         <item name="fontFamily">@font/montserrat</item>
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?colorOnPrimary</item>
     </style>
     <style name="TextAppearance.MdcTypographyStyles.Subtitle2" parent="TextAppearance.MaterialComponents.Subtitle2" tools:keep="@style/TextAppearance_MdcTypographyStyles_Subtitle2">
         <item name="fontFamily">@font/montserrat</item>
         <item name="android:fontFamily">@font/montserrat</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?colorOnPrimary</item>
     </style>
     <style name="TextAppearance.MdcTypographyStyles.Body1" parent="TextAppearance.MaterialComponents.Body1">
         <item name="fontFamily">@font/noto_sans</item>
         <item name="android:fontFamily">@font/noto_sans</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?colorOnPrimary</item>
     </style>
     <style name="TextAppearance.MdcTypographyStyles.Body2" parent="TextAppearance.MaterialComponents.Body2" tools:keep="@style/TextAppearance_MdcTypographyStyles_Body2">
         <item name="fontFamily">@font/noto_sans</item>
         <item name="android:fontFamily">@font/noto_sans</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?colorOnPrimary</item>
     </style>
     <style name="TextAppearance.MdcTypographyStyles.Button" parent="TextAppearance.MaterialComponents.Button">
         <item name="fontFamily">@font/noto_sans</item>
         <item name="android:fontFamily">@font/noto_sans</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?colorOnPrimary</item>
     </style>
     <style name="TextAppearance.MdcTypographyStyles.Caption" parent="TextAppearance.MaterialComponents.Caption">
         <item name="fontFamily">@font/noto_sans</item>
@@ -69,5 +75,6 @@
         <item name="fontFamily">@font/noto_sans</item>
         <item name="android:fontFamily">@font/noto_sans</item>
         <item name="android:textSize">10sp</item>
+        <item name="android:textColor">?colorOnPrimary</item>
     </style>
 </resources>

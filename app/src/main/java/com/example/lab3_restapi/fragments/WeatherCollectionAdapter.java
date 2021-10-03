@@ -15,12 +15,12 @@ import com.example.lab3_restapi.UserPreferences;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class WeatherCollectionAdapter extends FragmentStateAdapter {
     private final ArrayList<Fragment> weather_fragments;
+    private Timer update_timer;
 
     public WeatherCollectionAdapter(Fragment fragment) {
         super(fragment);
@@ -33,27 +33,8 @@ public class WeatherCollectionAdapter extends FragmentStateAdapter {
             weather_fragments.add(new WeatherDailyFragment());
 
         // Setup live weather update
-        Timer timer = new Timer();
-        TimerTask doAsynchronousTask = new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    final Activity main = fragment.getActivity();
-                    final String city = new UserPreferences(Objects.requireNonNull(main)).getCity();
-                    final JSONObject data = FetchData.fetchAPIData(fragment.getContext(), city);
-                    if (data != null) {
-                        APIData api_data = new APIData(data, city);
-                        ArrayList<APIData.WeatherData> new_data = new ArrayList<>();
-                        new_data.add(api_data.getCurrentWeatherData());
-                        main.runOnUiThread (() -> ((WeatherLiveFragment)(createFragment(0))).updateWeatherData(fragment.getContext(), new_data));
-                    }
-                } catch (Exception e) {
-                    Log.e(getClass().getName(), "Error in live weather data update Timer : " + e.getMessage());
-                }
-            }
-        };
-        // TODO : Make user prefs ?
-        timer.schedule(doAsynchronousTask, 60000, 60000); // Run update every minute
+        update_timer = new Timer();
+        restartUpdateTimer(fragment.getActivity(), fragment.getContext());
     }
 
     @NonNull
@@ -84,5 +65,33 @@ public class WeatherCollectionAdapter extends FragmentStateAdapter {
                 ((WeatherDailyFragment) (f)).updateWeatherData(ctx, new_data);
             }
         }
+    }
+
+    public void restartUpdateTimer(Activity main, Context context) {
+        update_timer.cancel();
+        update_timer = new Timer();
+        final long refresh_interval = new UserPreferences(context).getRefreshInterval(); // In minutes
+        Log.d(getClass().getName(), "Restart timer with " + refresh_interval + " minutes interval !");
+        update_timer.schedule(createUpdateTask(main, context), 60000 * refresh_interval, 60000 * refresh_interval); // Multiply milliseconds to minutes
+    }
+
+    private TimerTask createUpdateTask(Activity main, Context context) {
+        return new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    final String city = new UserPreferences(context).getCity();
+                    final JSONObject data = FetchData.fetchAPIData(context, city);
+                    if (data != null) {
+                        APIData api_data = new APIData(data, city);
+                        ArrayList<APIData.WeatherData> new_data = new ArrayList<>();
+                        new_data.add(api_data.getCurrentWeatherData());
+                        main.runOnUiThread (() -> ((WeatherLiveFragment)(createFragment(0))).updateWeatherData(context, new_data));
+                    }
+                } catch (Exception e) {
+                    Log.e(getClass().getName(), "Error in live weather data update Timer : " + e.getMessage());
+                }
+            }
+        };
     }
 }

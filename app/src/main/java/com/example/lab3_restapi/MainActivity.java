@@ -2,6 +2,7 @@ package com.example.lab3_restapi;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Address;
 import android.os.Bundle;
 import android.view.Menu;
@@ -39,6 +40,14 @@ public class MainActivity extends AppCompatActivity {
             frag_manager.setTabLayout(findViewById(R.id.forecast_tabs_layout));
             frag_manager.refreshApiData(this);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        frag_manager.refreshApiData(this);
+        frag_manager.restartUpdateTimer();
+
+        super.onResume();
     }
 
     @Override
@@ -96,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     List<Address> cities_suggestions = FetchData.getCitySuggestions(getApplicationContext(), query);
                     if (!Objects.requireNonNull(cities_suggestions).isEmpty()) {
                         Address new_city = cities_suggestions.get(0);
-                        new UserPreferences(main).setCity((new_city.getLocality() == null ? new_city.getFeatureName() : new_city.getLocality())
+                        new UserPreferences(getApplicationContext()).setCity((new_city.getLocality() == null ? new_city.getFeatureName() : new_city.getLocality())
                                 + ", " + new_city.getCountryCode()); // Format user input by using proper location spelling
                         frag_manager.refreshApiData(main);
                         location_item.collapseActionView();
@@ -119,6 +128,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            return true;
+        });
+
+        menu.findItem(R.id.action_show_settings).setOnMenuItemClickListener(item -> {
+            Intent intent = new Intent(main, UserSettingsActivity.class);
+            startActivity(intent);
             return true;
         });
 

@@ -88,7 +88,7 @@ public class CollectionWeatherFragment extends Fragment {
 
     public void refreshApiData(Activity activity) {
         new Thread(() -> {
-            final String city =  new UserPreferences(activity).getCity();
+            final String city =  new UserPreferences(activity.getApplicationContext()).getCity();
             final JSONObject data = FetchData.fetchAPIData(activity.getApplicationContext(), city);
             if (data != null) {
                 api_data = new APIData(data, city);
@@ -98,6 +98,10 @@ public class CollectionWeatherFragment extends Fragment {
                 Log.e(getTag(), "Unable to fetch API data.");
             }
         }).start();
+    }
+
+    public void restartUpdateTimer() {
+        weatherCollectionAdapter.restartUpdateTimer(getActivity(), getContext());
     }
 
     public void setTabLayout(TabLayout tab) {

@@ -8,10 +8,17 @@
         android:title="@string/iv_refresh_data_desc"
         app:showAsAction="ifRoom"
         app:actionLayout="@layout/action_refresh_data"/>
+
     <item
         android:id="@+id/action_change_location"
         android:icon="@drawable/ic_baseline_edit_location_24"
         android:title="@string/change_location_desc"
         app:showAsAction="collapseActionView|ifRoom"
         app:actionLayout="@layout/action_change_location"/>
+
+    <item
+        android:id="@+id/action_show_settings"
+        android:title="@string/settings"
+        android:contentDescription="@string/open_settings"
+        app:showAsAction="never"/>
 </menu>
