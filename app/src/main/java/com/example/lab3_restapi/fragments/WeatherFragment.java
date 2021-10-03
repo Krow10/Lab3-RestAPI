@@ -3,6 +3,7 @@ package com.example.lab3_restapi.fragments;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.widget.TextView;
 
 import androidx.core.content.res.ResourcesCompat;
@@ -18,6 +19,7 @@ import java.util.Objects;
 import java.util.TimeZone;
 
 public abstract class WeatherFragment extends Fragment {
+    protected Handler update_weather_data_handler = new Handler();
     public abstract void updateWeatherData(Context ctx, ArrayList<APIData.WeatherData> current);
 
     public static String timestampToDate(long timestamp) {

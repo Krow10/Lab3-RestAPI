@@ -7,7 +7,6 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.RotateDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
@@ -94,7 +93,8 @@ public class WeatherLiveFragment extends WeatherFragment {
             Log.d(this.getTag(), "Updated live weather data !");
             updateFields(rootView);
         } else {
-            new Handler().postDelayed(() -> updateWeatherData(ctx, current_), ctx.getResources().getInteger(R.integer.api_retry_delay_ms));
+            update_weather_data_handler.removeCallbacksAndMessages(null);
+            update_weather_data_handler.postDelayed(() -> updateWeatherData(ctx, current_), ctx.getResources().getInteger(R.integer.api_retry_delay_ms));
         }
     }
 

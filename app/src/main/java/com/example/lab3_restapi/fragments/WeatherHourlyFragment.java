@@ -6,7 +6,6 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.RotateDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -182,7 +181,8 @@ public class WeatherHourlyFragment extends WeatherFragment {
             current_hourly_forecast = new_forecast;
             hourly_adapter.updateForecast(new_forecast);
         } else {
-            new Handler().postDelayed(() -> updateWeatherData(ctx, new_forecast), ctx.getResources().getInteger(R.integer.api_retry_delay_ms)* 10L); // TODO : Change this
+            update_weather_data_handler.removeCallbacksAndMessages(null);
+            update_weather_data_handler.postDelayed(() -> updateWeatherData(ctx, new_forecast), ctx.getResources().getInteger(R.integer.api_retry_delay_ms));
         }
     }
 }
