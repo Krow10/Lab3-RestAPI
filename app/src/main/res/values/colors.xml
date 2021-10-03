@@ -12,6 +12,8 @@
     <color name="bg_gradient_start">@color/blue_400</color>
     <color name="bg_gradient_end">@color/blue_100</color>
 
+    <!-- TODO : Change this to work with dark theme -->
     <color name="ic_details_fill">#FCF7F8</color>
     <color name="ic_sun_fill">#FFF9B16E</color>
+    <color name="temp_graph_color">#FF303132</color>
 </resources>

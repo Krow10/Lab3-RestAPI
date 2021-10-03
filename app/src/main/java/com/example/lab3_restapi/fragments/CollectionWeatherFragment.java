@@ -30,7 +30,9 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Locale;
 
 public class CollectionWeatherFragment extends Fragment {
     private APIData api_data;
@@ -72,10 +74,11 @@ public class CollectionWeatherFragment extends Fragment {
                         tab_title = getString(R.string.tab_today);
                         break;
                     default:
-                        // Convert tab position to full date for the next days
+                        // Convert tab position to date for the next days
                         Calendar pos_to_date = Calendar.getInstance();
-                        pos_to_date.add(Calendar.DAY_OF_YEAR, position - 1);
-                        tab_title = DateFormat.getDateInstance(DateFormat.MEDIUM).format(pos_to_date.getTime());
+                        pos_to_date.add(Calendar.DAY_OF_WEEK, position - 1);
+                        tab_title = pos_to_date.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault()) + " " // Day of week
+                                + Arrays.stream(DateFormat.getDateInstance(DateFormat.MEDIUM).format(pos_to_date.getTime()).split(",")).findFirst().orElse(""); // Day of month
                 }
 
                 tab.setText(tab_title);

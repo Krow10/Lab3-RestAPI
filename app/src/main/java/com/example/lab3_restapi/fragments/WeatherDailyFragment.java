@@ -9,20 +9,35 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.example.lab3_restapi.APIData;
 import com.example.lab3_restapi.R;
-import com.google.android.material.progressindicator.CircularProgressIndicator;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.List;
+
+import lecho.lib.hellocharts.model.Line;
+import lecho.lib.hellocharts.model.LineChartData;
+import lecho.lib.hellocharts.model.PointValue;
+import lecho.lib.hellocharts.model.Viewport;
+import lecho.lib.hellocharts.view.LineChartView;
 
 public class WeatherDailyFragment extends WeatherFragment {
     private APIData.WeatherData current;
-    private ImageView weatherIcon;
+
+    private TextView city;
+
+    private ImageView weather_icon;
+    private TextView weather_desc;
+
+    private LineChartView temp_chart;
+
+    private TextView sunrise;
+    private TextView sunset;
 
     public WeatherDailyFragment() {}
 
@@ -31,7 +46,31 @@ public class WeatherDailyFragment extends WeatherFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.weather_daily, container, false);
         rootView.setAlpha(0f);
-        weatherIcon = (ImageView) rootView.findViewById(R.id.w_daily_icon);
+
+        city = rootView.findViewById(R.id.w_daily_city);
+
+        weather_icon = rootView.findViewById(R.id.w_daily_weather_icon);
+        weather_desc = rootView.findViewById(R.id.w_daily_weather_desc);
+
+        temp_chart = rootView.findViewById(R.id.w_daily_temp_chart);
+
+        Line line = new Line(new ArrayList<>(3))
+            .setColor(ResourcesCompat.getColor(getResources(), R.color.temp_graph_color, null))
+            .setCubic(true)
+            .setHasLabels(true)
+            .setFilled(true)
+            .setAreaTransparency(100);
+
+        List<Line> lines = new ArrayList<>();
+        lines.add(line);
+
+        LineChartData data = new LineChartData()
+            .setLines(lines)
+            .setBaseValue(getResources().getInteger(R.integer.temp_chart_y_axis_values_offset)); // Make area below line fill up to the x-axis
+        temp_chart.setLineChartData(data); // Link chart data to the chart view (to do before the viewport setup !)
+
+        sunrise = rootView.findViewById(R.id.w_daily_sunrise);
+        sunset = rootView.findViewById(R.id.w_daily_sunset);
 
         if (current != null)
             updateFields();
@@ -52,11 +91,34 @@ public class WeatherDailyFragment extends WeatherFragment {
     }
 
     private void updateFields() {
-        final String weather_icon_url = "http://openweathermap.org/img/wn/" + current.icon_url + "@2x.png";
+        city.setText(current.city);
 
-        Picasso.get()
-                .load(weather_icon_url)
-                .placeholder(Objects.requireNonNull(new CircularProgressIndicator(requireContext()).getIndeterminateDrawable()))
-                .into(weatherIcon);
+        final int icon_id = getIconID(getContext(), current.icon_url);
+        weather_icon.setImageResource(icon_id != 0 ? icon_id : R.drawable.ic_baseline_cached_24);
+        weather_desc.setText(current.description);
+
+        List<PointValue> temp_values = new ArrayList<>();
+        temp_values.add(new PointValue(0, (float) current.temp_morning).setLabel(formatDecimal(current.temp_morning) + "°C"));
+        temp_values.add(new PointValue(1, (float) current.temp_day).setLabel(formatDecimal(current.temp_day) + "°C"));
+        temp_values.add(new PointValue(2, (float) current.temp_evening).setLabel(formatDecimal(current.temp_evening) + "°C"));
+
+        temp_chart.getLineChartData().getLines().get(0).setValues(temp_values);
+        temp_chart.setLineChartData(temp_chart.getLineChartData()); // Update graph data
+
+        // Scale the y axis to prevent line chart to start from the lowest y value
+        // From @lecho (https://github.com/lecho/hellocharts-android/issues/252#issuecomment-196530789)
+        final Viewport max_viewport = new Viewport(temp_chart.getMaximumViewport());
+        max_viewport.top += getResources().getInteger(R.integer.temp_chart_y_axis_values_offset);
+        max_viewport.bottom -= getResources().getInteger(R.integer.temp_chart_y_axis_values_offset);
+
+        temp_chart.setViewportCalculationEnabled(false);
+        temp_chart.setZoomEnabled(false);
+        temp_chart.setMaximumViewport(max_viewport);
+        temp_chart.setCurrentViewport(max_viewport);
+
+        sunrise.setText(timestampToDate(current.sunrise));
+        loadIconText(sunrise, R.drawable.ic_sunrise, R.color.ic_sun_fill, "start");
+        sunset.setText(timestampToDate(current.sunset));
+        loadIconText(sunset, R.drawable.ic_sunset, R.color.ic_sun_fill, "start");
     }
 }

@@ -7,7 +7,7 @@
     <string name="tab_live">Live</string>
     <string name="tab_today">Today</string>
 
-    <!-- Live tab contents -->
+    <!-- Live tab content -->
     <string name="feels_like">°C\nfeels\nlike</string> <!-- TODO : Change to user prefs -->
     <string name="last_updated">Last updated at</string>
 
@@ -15,4 +15,10 @@
     <string name="iv_refresh_data_desc">Actualize the weather data</string>
     <string name="w_icon_desc">Weather preview</string>
     <string name="change_location_desc">Change the location for weather forecast</string>
+
+    <!-- Daily tabs content -->
+    <string name="temperature_forecast">Temperature forecast</string>
+    <string name="morning">Morning</string>
+    <string name="day">Day</string>
+    <string name="evening">Evening</string>
 </resources>

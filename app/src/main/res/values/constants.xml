@@ -8,4 +8,5 @@
     <dimen name="layout_sun_item_margin">16dp</dimen>
     <integer name="tab_content_fade_in_anim_speed">750</integer>
     <dimen name="hourly_item_content_margin">8dp</dimen>
+    <integer name="temp_chart_y_axis_values_offset">2</integer>
 </resources>

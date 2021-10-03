@@ -18,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 
 import com.example.lab3_restapi.fragments.CollectionWeatherFragment;
-import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN); // Prevent keyboard from pushing the view
         setContentView(R.layout.activity_main);
-        setSupportActionBar((MaterialToolbar)(findViewById(R.id.appbar)));
+        setSupportActionBar(findViewById(R.id.appbar));
 
         if (savedInstanceState == null) { // First time running the activity
             frag_manager = new CollectionWeatherFragment();

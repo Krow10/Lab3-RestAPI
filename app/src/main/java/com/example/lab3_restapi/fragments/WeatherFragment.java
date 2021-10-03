@@ -1,7 +1,11 @@
 package com.example.lab3_restapi.fragments;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.widget.TextView;
 
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.lab3_restapi.APIData;
@@ -10,6 +14,7 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public abstract class WeatherFragment extends Fragment {
@@ -35,5 +40,28 @@ public abstract class WeatherFragment extends Fragment {
 
     public String formatDecimal(final double d) {
         return new DecimalFormat("0.#").format(d);
+    }
+
+    public void loadIconText(TextView tv, int drawable_id, int color_id, String side) {
+        Drawable d = ResourcesCompat.getDrawable(getResources(), drawable_id, null);
+        Objects.requireNonNull(d).setColorFilter(ResourcesCompat.getColor(getResources(), color_id, null), PorterDuff.Mode.SRC_IN);
+        switch (side) {
+            case "start":
+                tv.setCompoundDrawablesRelativeWithIntrinsicBounds(d, null, null, null);
+                break;
+            case "top":
+                tv.setCompoundDrawablesRelativeWithIntrinsicBounds(null, d, null, null);
+                break;
+            case "end":
+                tv.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, d, null);
+                break;
+            case "bottom":
+                tv.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, null, d);
+                break;
+            default:
+                tv.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, null, null);
+                break;
+        }
+        tv.setCompoundDrawablePadding(15);
     }
 }

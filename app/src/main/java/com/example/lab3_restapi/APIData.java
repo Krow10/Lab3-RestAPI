@@ -20,7 +20,9 @@ public class APIData {
         public long timestamp;
         public long sunrise;
         public long sunset;
-        public double temp;
+        public double temp_morning;
+        public double temp_day;
+        public double temp_evening;
         public double feels_like;
         public double pressure;
         public double humidity;
@@ -36,7 +38,9 @@ public class APIData {
             timestamp = in.readLong();
             sunrise = in.readLong();
             sunset = in.readLong();
-            temp = in.readDouble();
+            temp_morning = in.readDouble();
+            temp_day = in.readDouble();
+            temp_evening = in.readDouble();
             feels_like = in.readDouble();
             pressure = in.readDouble();
             humidity = in.readDouble();
@@ -69,7 +73,9 @@ public class APIData {
             dest.writeLong(timestamp);
             dest.writeLong(sunrise);
             dest.writeLong(sunset);
-            dest.writeDouble(temp);
+            dest.writeDouble(temp_morning);
+            dest.writeDouble(temp_day);
+            dest.writeDouble(temp_evening);
             dest.writeDouble(feels_like);
             dest.writeDouble(pressure);
             dest.writeDouble(humidity);
@@ -123,14 +129,22 @@ public class APIData {
     private WeatherData parseWeatherData(JSONObject obj, final String city, long timezone_offset) { // TODO : Parse differently for live, hourly and daily
         try {
             JSONObject current_weather = obj.getJSONArray("weather").getJSONObject(0);
-            Function<Long, Long> changeTimezone = (Function<Long, Long>) l -> l + timezone_offset;
+            Function<Long, Long> changeTimezone = l -> l + timezone_offset;
 
             WeatherData w = new WeatherData();
             w.city = city;
             w.timestamp = changeTimezone.apply(obj.getLong("dt"));
             w.sunrise = changeTimezone.apply(obj.has("sunrise") ? obj.getLong("sunrise") : 0);
             w.sunset = changeTimezone.apply(obj.has("sunset") ? obj.getLong("sunset") : 0);
-            w.temp = obj.get("temp") instanceof JSONObject ? ((JSONObject) obj.get("temp")).getDouble("day") : obj.getDouble("temp");
+            if (obj.get("temp") instanceof JSONObject) {
+                w.temp_morning = ((JSONObject) obj.get("temp")).getDouble("morn");
+                w.temp_day = ((JSONObject) obj.get("temp")).getDouble("day");
+                w.temp_evening = ((JSONObject) obj.get("temp")).getDouble("eve");
+            } else {
+                w.temp_morning = 0;
+                w.temp_day = obj.getDouble("temp");
+                w.temp_evening = 0;
+            }
             w.feels_like = obj.get("feels_like") instanceof JSONObject ? ((JSONObject) obj.get("feels_like")).getDouble("day") : obj.getDouble("feels_like");
             w.pressure = obj.getDouble("pressure");
             w.humidity = obj.getDouble("humidity");

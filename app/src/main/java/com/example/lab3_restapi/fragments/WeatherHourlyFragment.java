@@ -101,7 +101,7 @@ public class WeatherHourlyFragment extends WeatherFragment {
             final int icon_id = getIconID(getContext(), hour.icon_url);
             holder.getWeatherIcon().setImageResource(icon_id != 0 ? icon_id : R.drawable.ic_baseline_cached_24);
 
-            holder.getTemp().setText(formatDecimal(hour.temp) + "°C"); // TODO : Change to user preference
+            holder.getTemp().setText(formatDecimal(hour.temp_day) + "°C"); // TODO : Change to user preference
 
             RotateDrawable wind_dir_icon = (RotateDrawable) Objects.requireNonNull(ResourcesCompat.getDrawable(
                     getResources(), R.drawable.ic_wind_dir_animated, null)).mutate(); // Call 'mutate()' to create a copy
