@@ -6,7 +6,7 @@
         android:id="@+id/action_refresh_data"
         android:icon="@drawable/ic_baseline_cached_24"
         android:title="@string/iv_refresh_data_desc"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         app:actionLayout="@layout/action_refresh_data"/>
 
     <item

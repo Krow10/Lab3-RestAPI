@@ -29,6 +29,7 @@ import lecho.lib.hellocharts.view.LineChartView;
 
 public class WeatherDailyFragment extends WeatherFragment {
     private APIData.WeatherData current;
+    private boolean has_been_resized = false;
 
     private TextView city;
 
@@ -84,7 +85,7 @@ public class WeatherDailyFragment extends WeatherFragment {
     public void updateWeatherData(Context ctx, ArrayList<APIData.WeatherData> current_) {
         if (getView() != null) {
             current = current_.get(0);
-            Log.d(this.getTag(), "Updated hourly weather data !");
+            Log.d(this.getTag(), "Updated hourly weather data : " + current.temp_day);
             updateFields();
         } else {
             new Handler().postDelayed(() -> updateWeatherData(ctx, current_), ctx.getResources().getInteger(R.integer.api_retry_delay_ms));
@@ -104,20 +105,25 @@ public class WeatherDailyFragment extends WeatherFragment {
         temp_values.add(new PointValue(1, (float) current.temp_day).setLabel(formatDecimal(current.temp_day) + temp_unit));
         temp_values.add(new PointValue(2, (float) current.temp_evening).setLabel(formatDecimal(current.temp_evening) + temp_unit));
 
+        // Update graph data
         LineChartData updated_data = new LineChartData(temp_chart.getLineChartData());
         updated_data.getLines().get(0).setValues(temp_values);
-        temp_chart.setLineChartData(updated_data); // Update graph data
+        temp_chart.setLineChartData(updated_data);
 
-        // Scale the y axis to prevent line chart to start from the lowest y value
-        // From @lecho (https://github.com/lecho/hellocharts-android/issues/252#issuecomment-196530789)
-        final Viewport max_viewport = new Viewport(temp_chart.getMaximumViewport());
-        max_viewport.top += getResources().getInteger(R.integer.temp_chart_y_axis_values_offset);
-        max_viewport.bottom -= getResources().getInteger(R.integer.temp_chart_y_axis_values_offset);
+        if (!has_been_resized) { // Prevent shrinking graph every time data is updated
+            has_been_resized = true;
 
-        temp_chart.setViewportCalculationEnabled(false);
-        temp_chart.setZoomEnabled(false);
-        temp_chart.setMaximumViewport(max_viewport);
-        temp_chart.setCurrentViewport(max_viewport);
+            // Scale the y axis to prevent line chart to start from the lowest y value
+            // From @lecho (https://github.com/lecho/hellocharts-android/issues/252#issuecomment-196530789)
+            final Viewport max_viewport = new Viewport(temp_chart.getMaximumViewport());
+            max_viewport.top += getResources().getInteger(R.integer.temp_chart_y_axis_values_offset);
+            max_viewport.bottom -= getResources().getInteger(R.integer.temp_chart_y_axis_values_offset);
+
+            temp_chart.setViewportCalculationEnabled(false);
+            temp_chart.setZoomEnabled(false);
+            temp_chart.setMaximumViewport(max_viewport);
+            temp_chart.setCurrentViewport(max_viewport);
+        }
 
         sunrise.setText(timestampToDate(current.sunrise));
         loadIconText(sunrise, R.drawable.ic_sunrise, R.color.ic_sun_fill, "start");

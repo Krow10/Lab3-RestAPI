@@ -33,7 +33,7 @@ public class FetchData {
         String url = "https://api.openweathermap.org/data/2.5/onecall?"
                 + "lat=" + city_coordinates.latitude
                 + "&lon=" + city_coordinates.longitude
-                + "&units=" + new UserPreferences(context).getUnits() // TODO : Add units as user preference
+                + "&units=" + new UserPreferences(context).getUnits()
                 + "&appid=" + context.getResources().getString(R.string.api_key);
         Log.d("FetchData", "Url : " + url);
 

@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN); // Prevent keyboard from pushing the view
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN); // Prevent keyboard from pushing up the view
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.appbar));
 
@@ -44,10 +44,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        super.onResume();
         frag_manager.refreshApiData(this);
         frag_manager.restartUpdateTimer();
-
-        super.onResume();
     }
 
     @Override
@@ -82,11 +81,19 @@ public class MainActivity extends AppCompatActivity {
         location_item.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
+                item.setVisible(false); // Make this item not appear in overflow menu when SearchView is expanded since we're already editing the city
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
+                /*
+                    Problem : If overflow menu is clicked while SearchView is expanded, some menu items disappear after returning to collapsed state.
+
+                    Solution : Invalidate the options menu to recalculate available space for items. Though items are still appearing and disappearing when they
+                               shouldn't when clicking the overflow menu while SearchView is expanded.
+                 */
+                supportInvalidateOptionsMenu();
                 SearchView sv = item.getActionView().findViewById(R.id.location_searchview);
                 if (sv != null)
                     sv.clearFocus(); // Hides keyboard when SearchView is collapsed
@@ -131,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
+        // Setup settings action
         menu.findItem(R.id.action_show_settings).setOnMenuItemClickListener(item -> {
             Intent intent = new Intent(main, UserSettingsActivity.class);
             startActivity(intent);

@@ -14,7 +14,8 @@
         <!-- Customize your theme here. -->
         <item name="tabStyle">@style/Widget.MaterialComponents.TabLayout.PrimarySurface</item>
         <item name="android:actionMenuTextColor">?colorOnPrimary</item>
-        <item name="android:textColorHint">@color/on_primary_50</item>
+        <item name="android:editTextColor">?colorOnPrimary</item> <!-- SearchView user input color -->
+        <item name="android:textColorHint">@color/on_primary_50</item> <!-- SearchView placeholder color -->
     </style>
 
     <style name="Theme.UserSettingsScreen" parent="Theme.MaterialComponents.DayNight.NoActionBar">
