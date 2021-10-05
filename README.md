@@ -35,3 +35,4 @@ Etienne Donneger - etienne.donneger.1@ens.etsmtl.ca
 
 - [OpenWeather](https://openweathermap.org) - OpenWeather platform is a set of elegant and widely recognisable APIs. Powered by convolutional machine learning solutions, it is capable of delivering all the weather information necessary for decision-making for any location on the globe.
 - [HelloCharts for Android](https://github.com/lecho/hellocharts-android) - Charts/graphs library for Android compatible with API 8+, several chart types with support for scaling, scrolling and animations.
+- [Alexey Onufriev](https://dribbble.com/onufriev) - Free Weather Icons
