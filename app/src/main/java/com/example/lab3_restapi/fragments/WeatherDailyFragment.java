@@ -2,7 +2,6 @@ package com.example.lab3_restapi.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,9 @@ import lecho.lib.hellocharts.model.PointValue;
 import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 
+/**
+ * This class represent the daily forecast view used in the <i>day</i> tabs.
+ */
 public class WeatherDailyFragment extends WeatherFragment {
     private APIData.WeatherData current;
 
@@ -39,8 +41,18 @@ public class WeatherDailyFragment extends WeatherFragment {
     private TextView sunrise;
     private TextView sunset;
 
+    /**
+     * Default empty constructor.
+     */
     public WeatherDailyFragment() {}
 
+    /**
+     * Inherited listener used to inflate the layout content. Also setup the temperature line chart appearance.
+     * @param inflater the layout inflater
+     * @param container the container for the new layout
+     * @param savedInstanceState unused
+     * @return The view created from the layout definition.
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,7 +66,7 @@ public class WeatherDailyFragment extends WeatherFragment {
 
         temp_chart = rootView.findViewById(R.id.w_daily_temp_chart);
 
-        Line line = new Line(new ArrayList<>(3))
+        Line line = new Line(new ArrayList<>(3)) // 3 points for morning, day, evening
             .setColor(ResourcesCompat.getColor(getResources(), R.color.temp_graph_color, null))
             .setCubic(true)
             .setHasLabels(true)
@@ -79,18 +91,25 @@ public class WeatherDailyFragment extends WeatherFragment {
         return rootView;
     }
 
+    /**
+     * Inherited method to update the view's fields. It is called recursively until the view is ready.
+     * @param ctx used to get the delay before retrying the update
+     * @param new_forecast the new forecast data
+     */
     @Override
-    public void updateWeatherData(Context ctx, ArrayList<APIData.WeatherData> current_) {
+    public void updateWeatherData(Context ctx, ArrayList<APIData.WeatherData> new_forecast) {
         if (getView() != null) {
-            current = current_.get(0);
-            Log.d(this.getTag(), "Updated hourly weather data : " + current.temp_day);
+            current = new_forecast.get(0);
             updateFields();
         } else {
             update_weather_data_handler.removeCallbacksAndMessages(null);
-            update_weather_data_handler.postDelayed(() -> updateWeatherData(ctx, current_), ctx.getResources().getInteger(R.integer.api_retry_delay_ms));
+            update_weather_data_handler.postDelayed(() -> updateWeatherData(ctx, new_forecast), ctx.getResources().getInteger(R.integer.api_retry_delay_ms));
         }
     }
 
+    /**
+     * Update all the displayed values with the current forecast values.
+     */
     private void updateFields() {
         city.setText(current.city);
 
@@ -98,6 +117,7 @@ public class WeatherDailyFragment extends WeatherFragment {
         weather_icon.setImageResource(icon_id != 0 ? icon_id : R.drawable.ic_baseline_cached_24);
         weather_desc.setText(current.description);
 
+        // Create new temperature values with respective labels
         final String temp_unit = new UserPreferences(getContext()).getTempUnit();
         List<PointValue> temp_values = new ArrayList<>();
         temp_values.add(new PointValue(0, (float) current.temp_morning).setLabel(formatDecimal(current.temp_morning) + temp_unit));
@@ -119,9 +139,9 @@ public class WeatherDailyFragment extends WeatherFragment {
         temp_chart.setMaximumViewport(max_viewport);
         temp_chart.setCurrentViewport(max_viewport);
 
-        sunrise.setText(timestampToDate(current.sunrise));
-        loadIconText(sunrise, R.drawable.ic_sunrise, R.color.ic_sun_fill, "start");
-        sunset.setText(timestampToDate(current.sunset));
-        loadIconText(sunset, R.drawable.ic_sunset, R.color.ic_sun_fill, "start");
+        sunrise.setText(timestampToTime(current.sunrise));
+        loadTextViewDrawable(sunrise, R.drawable.ic_sunrise, R.color.ic_sun_fill, "start");
+        sunset.setText(timestampToTime(current.sunset));
+        loadTextViewDrawable(sunset, R.drawable.ic_sunset, R.color.ic_sun_fill, "start");
     }
 }

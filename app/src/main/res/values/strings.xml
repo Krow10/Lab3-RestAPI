@@ -28,8 +28,10 @@
     <string name="units_title">Units</string>
     <string name="data_refresh_interval_title">Weather forecast refresh</string>
     <string name="data_refresh_interval_summary">Set the time interval to update weather data</string>
+    <string name="max_hourly_forecast_title">Hourly forecast limit</string>
+    <string name="max_hourly_forecast_summary">Set the maximum hours lookahead from now</string>
 
-    <!-- Settings labels -->
+    <!-- Settings values -->
         <!-- Units -->
         <string name="units_standard">Standard</string>
         <string name="units_metric">Metric</string>

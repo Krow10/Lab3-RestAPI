@@ -18,10 +18,21 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * This class holds all the weather fragments used to display the forecasts' information for the different tabs.
+ *
+ * @see WeatherLiveFragment
+ * @see WeatherHourlyFragment
+ * @see WeatherDailyFragment
+ */
 public class WeatherCollectionAdapter extends FragmentStateAdapter {
     private final ArrayList<Fragment> weather_fragments;
     private Timer update_timer;
 
+    /**
+     * Default constructor creating a {@link WeatherLiveFragment}, a {@link WeatherHourlyFragment} and seven {@link WeatherDailyFragment}.
+     * @param fragment the <code>ViewPager2</code>'s parent fragment
+     */
     public WeatherCollectionAdapter(Fragment fragment) {
         super(fragment);
 
@@ -34,20 +45,38 @@ public class WeatherCollectionAdapter extends FragmentStateAdapter {
 
         // Setup live weather update
         update_timer = new Timer();
-        restartUpdateTimer(fragment.getActivity(), fragment.getContext());
+        restartUpdateTimer(fragment.requireActivity());
     }
 
+    /**
+     * Inherited method to create a new fragment for the <code>ViewPager2</code>.
+     * @param position the position of the fragment within the <code>ViewPager2</code>
+     * @return The fragment to display.
+     */
     @NonNull
     @Override
     public Fragment createFragment(int position) {
         return weather_fragments.get(position);
     }
 
+    /**
+     * Inherited method to get the number of fragments currently held.
+     * @return The number of fragments.
+     */
     @Override
     public int getItemCount() {
         return weather_fragments.size();
     }
 
+    /**
+     * Send the relevant weather forecast data to each child fragments using the {@link WeatherFragment#updateWeatherData(Context, ArrayList)} method.
+     * @param ctx context passed to the children fragments to successfully update
+     * @param data the new API data
+     *
+     * @see APIData#getCurrentWeatherData()
+     * @see APIData#getHourlyWeatherData(int)
+     * @see APIData#getDailyWeatherData(int)
+     */
     public void refreshFragmentsData(Context ctx, APIData data) {
         for (int i = 0; i < getItemCount(); ++i) {
             Fragment f = weather_fragments.get(i);
@@ -57,7 +86,7 @@ public class WeatherCollectionAdapter extends FragmentStateAdapter {
                 new_data.add(data.getCurrentWeatherData());
                 ((WeatherLiveFragment) (f)).updateWeatherData(ctx, new_data);
             } else if (f instanceof WeatherHourlyFragment && i == 1) {
-                ((WeatherHourlyFragment) (f)).updateWeatherData(ctx, data.getHourlyWeatherData());
+                ((WeatherHourlyFragment) (f)).updateWeatherData(ctx, data.getHourlyWeatherData(new UserPreferences(ctx).getMaxHourlyForecast()));
             } else {
                 ArrayList<APIData.WeatherData> new_data = new ArrayList<>();
                 new_data.add(data.getDailyWeatherData(i - 1));
@@ -67,26 +96,36 @@ public class WeatherCollectionAdapter extends FragmentStateAdapter {
         }
     }
 
-    public void restartUpdateTimer(Activity main, Context context) {
+    /**
+     * Reset the update timer period using the new user preference.
+     * @param main a reference to the {@link com.example.lab3_restapi.MainActivity}
+     *
+     * @see UserPreferences#getRefreshInterval()
+     */
+    public void restartUpdateTimer(Activity main) {
         update_timer.cancel();
         update_timer = new Timer();
-        final long refresh_interval = new UserPreferences(context).getRefreshInterval(); // In minutes
-        Log.d(getClass().getName(), "Restart timer with " + refresh_interval + " minutes interval !");
-        update_timer.schedule(createUpdateTask(main, context), 60000 * refresh_interval, 60000 * refresh_interval); // Multiply milliseconds to minutes
+        final long refresh_interval = new UserPreferences(main.getApplicationContext()).getRefreshInterval(); // In minutes
+        update_timer.schedule(createUpdateTask(main), 60000 * refresh_interval, 60000 * refresh_interval); // Multiply milliseconds to minutes
     }
 
-    private TimerTask createUpdateTask(Activity main, Context context) {
+    /**
+     * Create a {@link TimerTask} for updating the <code>Live</code> tab data.
+     * @param main used to run the update on the UI thread
+     * @return The new {@link TimerTask}.
+     */
+    private TimerTask createUpdateTask(Activity main) {
         return new TimerTask() {
             @Override
             public void run() {
                 try {
-                    final String city = new UserPreferences(context).getCity();
-                    final JSONObject data = FetchData.fetchAPIData(context, city);
+                    final String city = new UserPreferences(main.getApplicationContext()).getCity();
+                    final JSONObject data = FetchData.fetchAPIData(main.getApplicationContext(), city);
                     if (data != null) {
                         APIData api_data = new APIData(data, city);
                         ArrayList<APIData.WeatherData> new_data = new ArrayList<>();
                         new_data.add(api_data.getCurrentWeatherData());
-                        main.runOnUiThread (() -> ((WeatherLiveFragment)(createFragment(0))).updateWeatherData(context, new_data));
+                        main.runOnUiThread (() -> ((WeatherLiveFragment)(createFragment(0))).updateWeatherData(main.getApplicationContext(), new_data));
                     }
                 } catch (Exception e) {
                     Log.e(getClass().getName(), "Error in live weather data update Timer : " + e.getMessage());

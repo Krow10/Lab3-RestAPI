@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <DropDownPreference
         android:key="units"
@@ -16,4 +17,14 @@
         android:entries="@array/data_refresh_interval_labels"
         android:entryValues="@array/data_refresh_interval_values"
         android:defaultValue="1"/>
+
+    <SeekBarPreference
+        android:key="max_hourly_forecast"
+        android:title="@string/max_hourly_forecast_title"
+        android:summary="@string/max_hourly_forecast_summary"
+        app:showSeekBarValue="true"
+        app:seekBarIncrement="1"
+        app:min="1"
+        android:max="24"
+        android:defaultValue="16"/>
 </PreferenceScreen>

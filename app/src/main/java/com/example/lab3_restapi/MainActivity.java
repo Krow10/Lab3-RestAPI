@@ -18,15 +18,22 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 
-import com.example.lab3_restapi.fragments.CollectionWeatherFragment;
+import com.example.lab3_restapi.fragments.WeatherViewPagerFragment;
 
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This class represents the app's main activity launched at startup.
+ */
 public class MainActivity extends AppCompatActivity {
-    private CollectionWeatherFragment frag_manager;
+    private WeatherViewPagerFragment frag_manager;
     private Toast error_toast;
 
+    /**
+     * Inherited listener used to initialize the view, app bar and tabs as well as fetching data from the API for the first time.
+     * @param savedInstanceState unused
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,12 +41,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.appbar));
 
-        frag_manager = new CollectionWeatherFragment();
+        frag_manager = new WeatherViewPagerFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.main_container, frag_manager).commit();
         frag_manager.setTabLayout(findViewById(R.id.forecast_tabs_layout));
         frag_manager.refreshApiData(this);
     }
 
+    /**
+     * Inherited listener used to apply new settings when coming back from the {@link UserSettingsActivity}.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -47,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
         frag_manager.restartUpdateTimer();
     }
 
+    /**
+     * Inherited listener used to setup all the menu actions (refresh, edit location and overflow menu).
+     * @param menu the app bar menu
+     * @return <code>True</code> for the menu to be displayed.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.app_bar_menu, menu);
@@ -146,6 +161,9 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Utility method to force keyboard to appear (used for faster interaction with city location editing).
+     */
     private void showKeyboard() {
         ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }

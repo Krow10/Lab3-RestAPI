@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +31,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
+/**
+ * This class represent the live forecast view used in the <i>Live</i> tab.
+ */
 public class WeatherLiveFragment extends WeatherFragment {
     private APIData.WeatherData current;
     private float old_wind_deg;
@@ -53,8 +55,18 @@ public class WeatherLiveFragment extends WeatherFragment {
 
     private TextView updated;
 
+    /**
+     * Default empty constructor.
+     */
     public WeatherLiveFragment() {}
 
+    /**
+     * Inherited listener used to inflate the layout content.
+     * @param inflater the layout inflater
+     * @param container the container for the new layout
+     * @param savedInstanceState unused
+     * @return The view created from the layout definition.
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,23 +97,30 @@ public class WeatherLiveFragment extends WeatherFragment {
         return rootView;
     }
 
+    /**
+     * Inherited method to update the view's fields. It is called recursively until the view is ready.
+     * @param ctx used to get the delay before retrying the update
+     * @param new_forecast the new forecast data
+     */
     @Override
-    public void updateWeatherData(Context ctx, ArrayList<APIData.WeatherData> current_) {
+    public void updateWeatherData(Context ctx, ArrayList<APIData.WeatherData> new_forecast) {
         View rootView = getView();
         if (rootView != null) {
-            current = current_.get(0); // Only one weather forecast for live data
-            Log.d(this.getTag(), "Updated live weather data !");
+            current = new_forecast.get(0); // Only one weather forecast for live data
             updateFields(rootView);
         } else {
             update_weather_data_handler.removeCallbacksAndMessages(null);
-            update_weather_data_handler.postDelayed(() -> updateWeatherData(ctx, current_), ctx.getResources().getInteger(R.integer.api_retry_delay_ms));
+            update_weather_data_handler.postDelayed(() -> updateWeatherData(ctx, new_forecast), ctx.getResources().getInteger(R.integer.api_retry_delay_ms));
         }
     }
 
+    /**
+     * Update all the displayed values with the current forecast values.
+     */
     @SuppressLint("SetTextI18n")
     private void updateFields(View rootView) {
         city.setText(current.city);
-        local_time.setText("Local time : " + timestampToDate(current.timestamp));
+        local_time.setText("Local time : " + timestampToTime(current.timestamp));
 
         final int icon_id = getIconID(getContext(), current.icon_url);
         weather_icon.setImageResource(icon_id != 0 ? icon_id : R.drawable.ic_baseline_cached_24);
@@ -120,7 +139,7 @@ public class WeatherLiveFragment extends WeatherFragment {
         RotateDrawable wind_dir_icon = (RotateDrawable) Objects.requireNonNull(ResourcesCompat.getDrawable(
                 getResources(), R.drawable.ic_wind_dir_animated, null)).mutate(); // Call 'mutate()' to create a copy
         Objects.requireNonNull(wind_dir_icon).setColorFilter(ResourcesCompat.getColor(
-                getResources(), R.color.ic_details_fill, null), PorterDuff.Mode.SRC_IN);
+                getResources(), R.color.ic_details_fill, null), PorterDuff.Mode.SRC_IN); // Fill with details icon color
         wind_dir_icon.setFromDegrees(old_wind_deg);
         wind_dir_icon.setToDegrees((float) current.wind_deg);
         old_wind_deg = (float) current.wind_deg;
@@ -137,14 +156,14 @@ public class WeatherLiveFragment extends WeatherFragment {
 
         wind_speed.setText(formatDecimal(current.wind_speed * (new UserPreferences(getContext()).getSpeedUnit().equals("mph") ? 1 : 3.6f)) + " "
                 + new UserPreferences(getContext()).getSpeedUnit());
-        loadIconText(wind_speed, R.drawable.ic_wind_speed, R.color.ic_details_fill, "start");
+        loadTextViewDrawable(wind_speed, R.drawable.ic_wind_speed, R.color.ic_details_fill, "start");
         humidity.setText(formatDecimal(current.humidity) + " %");
-        loadIconText(humidity, R.drawable.ic_humidity, R.color.ic_details_fill, "start");
+        loadTextViewDrawable(humidity, R.drawable.ic_humidity, R.color.ic_details_fill, "start");
 
-        sunrise.setText(timestampToDate(current.sunrise));
-        loadIconText(sunrise, R.drawable.ic_sunrise, R.color.ic_sun_fill, "start");
-        sunset.setText(timestampToDate(current.sunset));
-        loadIconText(sunset, R.drawable.ic_sunset, R.color.ic_sun_fill, "start");
+        sunrise.setText(timestampToTime(current.sunrise));
+        loadTextViewDrawable(sunrise, R.drawable.ic_sunrise, R.color.ic_sun_fill, "start");
+        sunset.setText(timestampToTime(current.sunset));
+        loadTextViewDrawable(sunset, R.drawable.ic_sunset, R.color.ic_sun_fill, "start");
 
         final String device_local_time = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date().getTime());
         final String update_time = getResources().getString(R.string.last_updated) + " " + device_local_time;

@@ -19,7 +19,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class FetchData {
+/**
+ * This class acts as the intermediary between the <a href="https://openweathermap.org/api">OpenWeather API</a> and the app for handling requests.
+ * <p>It uses the Geocoder library as well as the Volley library to extract more precise location from the user input and make requests to the API.</p>
+ * <p>It is intended to be used as a <i>no-instance</i> helper class (hence static methods) to actualize the weather data when needed.</p>
+ */
+public final class FetchData {
+    /**
+     * Blocking method to request new forecast data from the API. Must be called from a thread to prevent stalling the flow of execution.
+     * @param context required for the Geocoder and Volley libraries
+     * @param city the city for which to retrieve weather data
+     * @return The JSON response from the API.
+     */
     public static JSONObject fetchAPIData(Context context, String city) {
         LatLng city_coordinates = getCityLocation(context, city);
         if (city_coordinates == null) {
@@ -35,12 +46,9 @@ public class FetchData {
                 + "&lon=" + city_coordinates.longitude
                 + "&units=" + new UserPreferences(context).getUnits()
                 + "&appid=" + context.getResources().getString(R.string.api_key);
-        Log.d("FetchData", "Url : " + url);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, future, error -> System.err.println("Error fetching data  : " + error.getMessage()));
-
-        Log.d(FetchData.class.getName(), "API request sent !");
         queue.add(jsonObjectRequest);
 
         try {
@@ -51,7 +59,12 @@ public class FetchData {
         }
     }
 
-    // From @Steve Benett (https://stackoverflow.com/a/20166820)
+    /**
+     * Lookup latitude and longitude coordinates for the location provided. Adapted from Steve Benett's <a href="https://stackoverflow.com/a/20166820">answer</a>.
+     * @param context required for the Geocoder library
+     * @param city the location to lookup
+     * @return The geographic position of the closest match to the location provided.
+     */
     public static LatLng getCityLocation(Context context, final String city) {
         List<Address> addresses = getCitySuggestions(context, city);
 
@@ -69,11 +82,17 @@ public class FetchData {
         }
     }
 
+    /**
+     * Provide up to five matches from the Geocoder library for the location provided (useful if user misspells the name of the location for example).
+     * @param context required for the Geocoder library
+     * @param city the location to lookup
+     * @return A list of up to 5 addresses matching the provided location.
+     */
     public static List<Address> getCitySuggestions(Context context, final String city) {
         if (Geocoder.isPresent()) {
             try {
                 Geocoder gc = new Geocoder(context);
-                return gc.getFromLocationName(city, 5); // get the found Address Objects
+                return gc.getFromLocationName(city, 5);
             } catch (IOException | IndexOutOfBoundsException e) {
                 Log.e("FetchData", "Unable to find this location (" + city + ") : " + e.getMessage());
             }

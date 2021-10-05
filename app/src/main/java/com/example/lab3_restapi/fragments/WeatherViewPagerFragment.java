@@ -34,17 +34,33 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class CollectionWeatherFragment extends Fragment {
-    private APIData api_data;
+/**
+ * This class holds the <a href="https://developer.android.com/guide/navigation/navigation-swipe-view-2">ViewPager2</a>
+ * used to navigate between the different forecasts in the app.
+ */
+public class WeatherViewPagerFragment extends Fragment {
     private WeatherCollectionAdapter weatherCollectionAdapter;
     private TabLayout tabLayout;
 
+    /**
+     * Inherited listener used to inflate the layout content.
+     * @param inflater the layout inflater
+     * @param container the container for the new layout
+     * @param savedInstanceState unused
+     * @return The view created from the layout definition.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.weather_viewpager, container, false);
     }
 
+    /**
+     * Inherited listener used to setup the element in the view (mainly the
+     * <a href="https://developer.android.com/reference/com/google/android/material/tabs/TabLayout">TabLayout</a>).
+     * @param view the newly created view
+     * @param savedInstanceState unused
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         weatherCollectionAdapter = new WeatherCollectionAdapter(this);
@@ -86,28 +102,46 @@ public class CollectionWeatherFragment extends Fragment {
         }
     }
 
+    /**
+     * Called from the {@link com.example.lab3_restapi.MainActivity} to start refreshing weather data from a new {@link Thread}.
+     * @param activity used to get a context and to run the update on the UI thread
+     */
     public void refreshApiData(Activity activity) {
         new Thread(() -> {
             final String city =  new UserPreferences(activity.getApplicationContext()).getCity();
             final JSONObject data = FetchData.fetchAPIData(activity.getApplicationContext(), city);
             if (data != null) {
-                api_data = new APIData(data, city);
                 // Run on UI thread to enable updating the information on the fragments' layout.
-                activity.runOnUiThread(() -> weatherCollectionAdapter.refreshFragmentsData(activity.getApplicationContext(), api_data));
+                activity.runOnUiThread(() -> weatherCollectionAdapter.refreshFragmentsData(activity.getApplicationContext(), new APIData(data, city)));
             } else {
                 Log.e(getTag(), "Unable to fetch API data.");
             }
         }).start();
     }
 
+    /**
+     * Reset the refresh timer from the {@link WeatherCollectionAdapter}. Called when returning from user settings to update the refresh period.
+     * 
+     * @see WeatherCollectionAdapter#restartUpdateTimer(Activity)
+     */
     public void restartUpdateTimer() {
-        weatherCollectionAdapter.restartUpdateTimer(getActivity(), getContext());
+        weatherCollectionAdapter.restartUpdateTimer(requireActivity());
     }
 
+    /**
+     * Set the <code>TabLayout</code> to be used by the <code>ViewPager2</code>.
+     * @param tab the new <code>TabLayout</code>
+     */
     public void setTabLayout(TabLayout tab) {
         tabLayout = tab;
     }
 
+    /**
+     * Utility function to convert from density-pixel unit to raw pixels dimension.
+     * @param res used to get the screen density
+     * @param dip the dp unit to convert
+     * @return The amount of pixels corresponding to the dp number based on the screen density.
+     */
     public static int dpToPixels(Resources res, float dip) {
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dip, res.getDisplayMetrics()));
     }
